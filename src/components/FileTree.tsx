@@ -54,12 +54,12 @@ const directoryStructure: DirectoryNode[] = [
 
 function DirectoryItem({
   node,
-  level = 0,
+  initIsOpen = false,
 }: {
   node: DirectoryNode;
-  level?: number;
+  initIsOpen?:boolean,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(initIsOpen);
 
   return (
     <div className="w-full">
@@ -88,10 +88,10 @@ function DirectoryItem({
       </div>
 
       {/* Children section with proper indentation */}
-      {isOpen && node.children && (
-        <div className="pl-4" >
+      {node.children && (
+        <div className={`pl-4 ${isOpen ? "" : "hidden"}`} >
           {node.children.map((child) => (
-            <DirectoryItem key={child.path} node={child} level={level + 1} />
+            <DirectoryItem key={child.path} node={child} />
           ))}
         </div>
       )}
@@ -106,7 +106,7 @@ export function FileTree({ className }: FileTreeProps) {
         Files
       </h3>
         {directoryStructure.map((node) => (
-          <DirectoryItem key={node.path} node={node} />
+          <DirectoryItem key={node.path} node={node} initIsOpen={true}  />
         ))}
       
     </div>

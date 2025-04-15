@@ -2,6 +2,7 @@ import { useState } from "react"
 import { ChevronDown, ChevronRight, Folder } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface FileTreeProps {
   className?: string
@@ -51,6 +52,13 @@ function DirectoryItem({ node, level = 0 }: { node: DirectoryNode; level?: numbe
   const hasChildren = node.children && node.children.length > 0
   const isEmptyDirectory = node.children && node.children.length === 0
 
+  const handleArrowClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (hasChildren || isEmptyDirectory) {
+      setIsOpen(!isOpen)
+    }
+  }
+
   return (
     <div>
       <div
@@ -58,19 +66,25 @@ function DirectoryItem({ node, level = 0 }: { node: DirectoryNode; level?: numbe
           "flex items-center py-1 px-2 rounded-md hover:bg-accent cursor-pointer",
           level > 0 && "ml-4"
         )}
-        onClick={() => (hasChildren || isEmptyDirectory) && setIsOpen(!isOpen)}
       >
-        {hasChildren || isEmptyDirectory ? (
-          isOpen ? (
-            <ChevronDown className="h-4 w-4 mr-1 flex-shrink-0" />
+        <div 
+          className="flex items-center"
+          onClick={handleArrowClick}
+        >
+          {hasChildren || isEmptyDirectory ? (
+            isOpen ? (
+              <ChevronDown className="h-4 w-4 mr-1 flex-shrink-0" />
+            ) : (
+              <ChevronRight className="h-4 w-4 mr-1 flex-shrink-0" />
+            )
           ) : (
-            <ChevronRight className="h-4 w-4 mr-1 flex-shrink-0" />
-          )
-        ) : (
-          <div className="w-5 mr-1 flex-shrink-0" />
-        )}
-        <Folder className="h-4 w-4 mr-2 text-muted-foreground" />
-        <span className="text-sm truncate">{node.name}</span>
+            <div className="w-5 mr-1 flex-shrink-0" />
+          )}
+        </div>
+        <Link href={node.path} className="flex items-center flex-1">
+          <Folder className="h-4 w-4 mr-2 text-muted-foreground" />
+          <span className="text-sm truncate">{node.name}</span>
+        </Link>
       </div>
       {hasChildren && isOpen && node.children && (
         <div>

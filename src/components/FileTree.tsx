@@ -26,6 +26,12 @@ const directoryStructure: DirectoryNode[] = [
           {
             name: "ui",
             path: "/src/components/ui",
+            children: [
+              {
+                name: "button",
+                path: "/src/components/ui/button",
+              },
+            ],
           },
         ],
       },
@@ -55,23 +61,21 @@ function DirectoryItem({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleArrowClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
-
   return (
     <div className="w-full">
-      <div className="flex items-center py-1 px-2 rounded-md hover:bg-accent">
+      <div className="flex items-center p-1 rounded-md hover:bg-accent hover:text-accent-foreground">
         {/* Arrow section */}
         <div
           className="flex items-center cursor-pointer"
-          onClick={handleArrowClick}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen((x)=>!x);
+          }}
         >
           {(() => {
             const Comp = isOpen ? ChevronDown : ChevronRight;
             return (
-              <Comp className="h-4 w-4 mr-1 flex-shrink-0 hover:text-accent" />
+              <Comp className="h-4 w-4 mr-1 flex-shrink-0" />
             );
           })()}
         </div>
@@ -97,15 +101,14 @@ function DirectoryItem({
 
 export function FileTree({ className }: FileTreeProps) {
   return (
-    <div className={cn("py-2", className)}>
+    <div className="px-2 flex flex-col gap-2">
       <h3 className="px-4 mb-2 text-sm font-medium">
         Files
       </h3>
-      <div className="space-y-1">
         {directoryStructure.map((node) => (
           <DirectoryItem key={node.path} node={node} />
         ))}
-      </div>
+      
     </div>
   );
 }

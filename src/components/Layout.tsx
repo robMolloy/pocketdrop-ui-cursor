@@ -13,10 +13,10 @@ export function Layout({ children }: LayoutProps) {
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false)
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen flex flex-col">
       <Header onOpenSidebar={() => {}} />
-      <div className="flex">
-        <aside className="hidden w-64 border-r bg-background md:block">
+      <div className="flex flex-1">
+        <aside className="hidden w-64 border-r bg-background md:block h-[calc(100vh-3.5rem)]">
           <Sidebar />
         </aside>
         <main className="flex-1">

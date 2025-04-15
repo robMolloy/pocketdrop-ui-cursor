@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { ChevronDown, ChevronRight, Folder } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 interface FileTreeProps {
@@ -54,40 +53,34 @@ function DirectoryItem({ node, level = 0 }: { node: DirectoryNode; level?: numbe
 
   const handleArrowClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (hasChildren || isEmptyDirectory) {
-      setIsOpen(!isOpen)
-    }
+    setIsOpen(!isOpen)
   }
 
   return (
-    <div>
-      <div
-        className={cn(
-          "flex items-center py-1 px-2 rounded-md hover:bg-accent cursor-pointer",
-          level > 0 && "ml-4"
-        )}
-      >
+    <div className="w-full">
+      <div className="flex items-center py-1 px-2 rounded-md hover:bg-accent">
+        {/* Arrow section */}
         <div 
-          className="flex items-center"
+          className="flex items-center cursor-pointer"
           onClick={handleArrowClick}
         >
-          {hasChildren || isEmptyDirectory ? (
-            isOpen ? (
-              <ChevronDown className="h-4 w-4 mr-1 flex-shrink-0" />
-            ) : (
-              <ChevronRight className="h-4 w-4 mr-1 flex-shrink-0" />
-            )
+          {isOpen ? (
+            <ChevronDown className="h-4 w-4 mr-1 flex-shrink-0" />
           ) : (
-            <div className="w-5 mr-1 flex-shrink-0" />
+            <ChevronRight className="h-4 w-4 mr-1 flex-shrink-0" />
           )}
         </div>
+        
+        {/* Directory content */}
         <Link href={node.path} className="flex items-center flex-1">
           <Folder className="h-4 w-4 mr-2 text-muted-foreground" />
           <span className="text-sm truncate">{node.name}</span>
         </Link>
       </div>
-      {hasChildren && isOpen && node.children && (
-        <div>
+      
+      {/* Children section with proper indentation */}
+      {isOpen && node.children && (
+        <div className={cn("pl-4", level > 0 && "ml-4")}>
           {node.children.map((child) => (
             <DirectoryItem key={child.path} node={child} level={level + 1} />
           ))}

@@ -12,17 +12,8 @@ export function RightSidebar({ isOpen, onClose }: RightSidebarProps) {
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-        <SheetHeader className="space-y-4">
+        <SheetHeader>
           <SheetTitle>Details</SheetTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </Button>
         </SheetHeader>
         <div className="mt-4">
           {/* Add your right sidebar content here */}

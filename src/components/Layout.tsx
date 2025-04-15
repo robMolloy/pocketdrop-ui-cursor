@@ -1,16 +1,16 @@
-import { useState } from "react"
 import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
 import { RightSidebar } from "./RightSidebar"
 import { Button } from "@/components/ui/button"
 import { PanelRight } from "lucide-react"
+import { useSidebarStore } from "@/lib/store"
 
 interface LayoutProps {
   children: React.ReactNode
 }
 
 export function Layout({ children }: LayoutProps) {
-  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false)
+  const { isOpen, open, close } = useSidebarStore()
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -25,7 +25,7 @@ export function Layout({ children }: LayoutProps) {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setIsRightSidebarOpen(true)}
+                onClick={open}
               >
                 <PanelRight className="h-4 w-4 mr-2" />
                 Open Sidebar
@@ -36,8 +36,8 @@ export function Layout({ children }: LayoutProps) {
         </main>
       </div>
       <RightSidebar
-        isOpen={isRightSidebarOpen}
-        onClose={() => setIsRightSidebarOpen(false)}
+        isOpen={isOpen}
+        onClose={close}
       />
     </div>
   )

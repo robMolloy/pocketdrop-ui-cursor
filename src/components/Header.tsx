@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Menu, Cloud } from "lucide-react"
+import { Cloud } from "lucide-react"
+import { ThemeToggle } from "./ThemeToggle"
 
 interface HeaderProps {
   onOpenSidebar: () => void
@@ -15,7 +15,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center space-x-2">
-            {/* Add navigation items here */}
+            <ThemeToggle />
           </nav>
         </div>
       </div>

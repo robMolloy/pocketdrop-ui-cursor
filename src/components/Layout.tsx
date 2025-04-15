@@ -1,16 +1,15 @@
-import { Header } from "./Header"
-import { Sidebar } from "./Sidebar"
-import { RightSidebar } from "./RightSidebar"
-import { Button } from "@/components/ui/button"
-import { PanelRight } from "lucide-react"
-import { useSidebarStore } from "@/lib/store"
+import { Button } from "@/components/ui/button";
+import { useRightSidebarStore } from "@/stores/rightSidebarStore";
+import { Header } from "./Header";
+import { RightSidebar } from "./RightSidebar";
+import { Sidebar } from "./Sidebar";
 
 interface LayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { isOpen, open, close } = useSidebarStore()
+  const { data: isOpen, open, close } = useRightSidebarStore();
 
   return (
     <div className="relative min-h-screen flex flex-col">
@@ -22,12 +21,7 @@ export function Layout({ children }: LayoutProps) {
         <main className="flex-1">
           <div className="container py-6">
             <div className="flex justify-end mb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={open}
-              >
-                <PanelRight className="h-4 w-4 mr-2" />
+              <Button variant="outline" size="sm" onClick={open}>
                 Open Sidebar
               </Button>
             </div>
@@ -35,10 +29,7 @@ export function Layout({ children }: LayoutProps) {
           </div>
         </main>
       </div>
-      <RightSidebar
-        isOpen={isOpen}
-        onClose={close}
-      />
+      <RightSidebar isOpen={isOpen} onClose={close} />
     </div>
-  )
-} 
+  );
+}

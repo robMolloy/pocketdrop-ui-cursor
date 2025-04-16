@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Home, LogOut, Settings, Users } from "lucide-react";
+import { Home, LogOut, Settings, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FileTree } from "./FileTree";
@@ -39,8 +39,8 @@ export function Sidebar() {
           <SidebarButton href="/" Icon={Home} isHighlighted={router.pathname === "/"}>
             Home
           </SidebarButton>
-          <SidebarButton href="/users" Icon={Users} isHighlighted={router.pathname === "/users"}>
-            Users
+          <SidebarButton href="/starred" Icon={Star} isHighlighted={router.pathname === "/starred"}>
+            Starred
           </SidebarButton>
           <FileTree />
         </div>

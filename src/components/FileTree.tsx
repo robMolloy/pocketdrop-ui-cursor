@@ -12,19 +12,19 @@ interface DirectoryNode {
 const directoryStructure: DirectoryNode[] = [
   {
     name: "src",
-    path: "/src",
+    path: "/browse/src",
     children: [
       {
         name: "components",
-        path: "/src/components",
+        path: "/browse/src/components",
         children: [
           {
             name: "ui",
-            path: "/src/components/ui",
+            path: "/browse/src/components/ui",
             children: [
               {
                 name: "button",
-                path: "/src/components/ui/button",
+                path: "/browse/src/components/ui/button",
               },
             ],
           },
@@ -32,17 +32,17 @@ const directoryStructure: DirectoryNode[] = [
       },
       {
         name: "pages",
-        path: "/src/pages",
+        path: "/browse/src/pages",
       },
       {
         name: "styles",
-        path: "/src/styles",
+        path: "/browse/src/styles",
       },
     ],
   },
   {
     name: "public",
-    path: "/public",
+    path: "/browse/public",
     children: [], // Empty array to indicate it's a directory
   },
 ];
@@ -94,7 +94,7 @@ function DirectoryItem({
 
 export function FileTree() {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col">
       {directoryStructure.map((node) => (
         <DirectoryItem key={node.path} node={node} initIsOpen={true} />
       ))}

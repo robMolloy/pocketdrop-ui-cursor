@@ -17,33 +17,27 @@ const useInitThemeStore = create<ThemeState>()(
     }),
     {
       name: "pocketdrop-theme",
-    }
-  )
+    },
+  ),
 );
 
 function useThemeStoreSideEffect() {
-  const theme = useInitThemeStore((state) => state.data);
+  const themeStore = useInitThemeStore();
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    // Remove both light and dark classes
     root.classList.remove("light", "dark");
 
-    if (theme === "system") {
-      // Check system preference
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
+    if (themeStore.data === "system") {
+      const isDefaultDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const systemTheme = isDefaultDarkMode ? "dark" : "light";
 
-      // Apply system theme
       root.classList.add(systemTheme);
     } else {
-      // Apply selected theme
-      root.classList.add(theme);
+      root.classList.add(themeStore.data);
     }
-  }, [theme]);
+  }, [themeStore.data]);
 
   return null;
 }
@@ -51,5 +45,10 @@ function useThemeStoreSideEffect() {
 export const useThemeStore = () => {
   const initThemeStore = useInitThemeStore();
 
-  return { ...initThemeStore, useThemeStoreSideEffect };
+  const cycleTheme = () => {
+    const theme = initThemeStore.data;
+    initThemeStore.setData(theme === "light" ? "dark" : theme === "dark" ? "system" : "light");
+  };
+
+  return { ...initThemeStore, useThemeStoreSideEffect, cycleTheme };
 };

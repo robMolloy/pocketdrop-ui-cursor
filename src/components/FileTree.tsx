@@ -58,10 +58,10 @@ function DirectoryItem({
 
   return (
     <div className="w-full">
-      <div className="flex items-center p-1 rounded-md hover:bg-accent hover:text-accent-foreground">
+      <div className="flex items-center rounded-md p-1 hover:bg-accent hover:text-accent-foreground">
         {/* Arrow section */}
         <div
-          className="flex items-center cursor-pointer"
+          className="flex cursor-pointer items-center"
           onClick={(e) => {
             e.stopPropagation();
             setIsOpen((x) => !x);
@@ -69,14 +69,14 @@ function DirectoryItem({
         >
           {(() => {
             const Comp = isOpen ? ChevronDown : ChevronRight;
-            return <Comp className="h-4 w-4 mr-1 flex-shrink-0" />;
+            return <Comp className="mr-1 h-4 w-4 flex-shrink-0" />;
           })()}
         </div>
 
         {/* Directory content */}
-        <Link href={node.path} className="flex items-center flex-1">
-          <Folder className="h-4 w-4 mr-2" />
-          <span className="text-sm truncate">{node.name}</span>
+        <Link href={node.path} className="flex flex-1 items-center">
+          <Folder className="mr-2 h-4 w-4" />
+          <span className="truncate text-sm">{node.name}</span>
         </Link>
       </div>
 
@@ -94,11 +94,12 @@ function DirectoryItem({
 
 export function FileTree() {
   return (
-    <div className="px-2 flex flex-col gap-2">
-      <h3 className="px-4 mb-2 text-sm font-medium">Files</h3>
-      {directoryStructure.map((node) => (
-        <DirectoryItem key={node.path} node={node} initIsOpen={true} />
-      ))}
-    </div>
+    <>
+      <div className="flex flex-col gap-2">
+        {directoryStructure.map((node) => (
+          <DirectoryItem key={node.path} node={node} initIsOpen={true} />
+        ))}
+      </div>
+    </>
   );
 }

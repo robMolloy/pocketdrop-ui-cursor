@@ -4,23 +4,19 @@ import { useThemeStore } from "@/stores/themeStore";
 
 export function ThemeToggle() {
   const themeStore = useThemeStore();
+  const theme = themeStore.data;
 
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={themeStore.cycleTheme}
-      title={
-        themeStore.data === "light"
-          ? "Light mode"
-          : themeStore.data === "dark"
-            ? "Dark mode"
-            : "System theme"
-      }
+      title={(() => {
+        return theme === "light" ? "Light mode" : theme === "dark" ? "Dark mode" : "System theme";
+      })()}
     >
       {(() => {
-        const Comp =
-          themeStore.data === "light" ? Sun : themeStore.data === "dark" ? Moon : Monitor;
+        const Comp = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
         return <Comp className="h-[1.2rem] w-[1.2rem]" />;
       })()}
       <span className="sr-only">Toggle theme</span>

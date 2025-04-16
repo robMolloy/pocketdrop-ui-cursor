@@ -5,26 +5,26 @@ import { useRouter } from "next/router";
 import { FileTree } from "./FileTree";
 import React, { ReactNode } from "react";
 
+const Wrapper = (p: { children: ReactNode, href?: string }) =>
+  p.href ? <Link href={p.href}>{p.children}</Link> : p.children;
+
 const SidebarButton = (p: {
   href?: string;
   Icon: typeof Home;
   children: ReactNode;
   isHighlighted: boolean;
 }) => {
-  const Wrapper = (p2: { children: ReactNode }) =>
-    p.href ? <Link href={p.href}>{p2.children}</Link> : p2.children;
   return (
-    <>
-      <Wrapper>
-        <Button
-          variant={p.isHighlighted ? "secondary" : "ghost"}
-          className="w-full justify-start pl-6"
-        >
-          <p.Icon className="mr-2 h-4 w-4" />
-          {p.children}
-        </Button>
-      </Wrapper>
-    </>
+    <Wrapper href={p.href}>
+      <Button
+        variant={p.isHighlighted ? "secondary" : "ghost"}
+        className="w-full justify-start pl-6"
+      >
+        <p.Icon className="mr-2 h-4 w-4" />
+        {p.children}
+      </Button>
+    </Wrapper>
+
   );
 };
 
@@ -33,7 +33,6 @@ export function Sidebar() {
 
   return (
     <div className={"flex h-full flex-col"}>
-      {/* Scrollable navigation section */}
       <div className="flex-1 overflow-y-auto p-3">
         <div className="flex flex-col gap-1">
           <SidebarButton href="/" Icon={Home} isHighlighted={router.pathname === "/"}>
@@ -44,8 +43,6 @@ export function Sidebar() {
           </SidebarButton>
           <FileTree />
         </div>
-
-        {/* File Tree Section */}
       </div>
 
       {/* Fixed bottom section */}

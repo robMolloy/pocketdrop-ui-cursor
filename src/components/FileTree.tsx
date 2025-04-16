@@ -94,12 +94,10 @@ function DirectoryItem({
 
 export function FileTree() {
   return (
-    <>
-      <div className="flex flex-col gap-2">
-        {directoryStructure.map((node) => (
-          <DirectoryItem key={node.path} node={node} initIsOpen={true} />
-        ))}
-      </div>
-    </>
+    <div className="flex flex-col gap-2">
+      {directoryStructure.map((node) => (
+        <DirectoryItem key={node.path} node={node} initIsOpen={true} />
+      ))}
+    </div>
   );
 }

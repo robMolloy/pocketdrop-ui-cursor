@@ -1,11 +1,6 @@
-import { useState } from "react";
 import { ChevronDown, ChevronRight, Folder } from "lucide-react";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
-
-interface FileTreeProps {
-  className?: string;
-}
+import { useState } from "react";
 
 interface DirectoryNode {
   name: string;
@@ -57,7 +52,7 @@ function DirectoryItem({
   initIsOpen = false,
 }: {
   node: DirectoryNode;
-  initIsOpen?:boolean,
+  initIsOpen?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(initIsOpen);
 
@@ -69,14 +64,12 @@ function DirectoryItem({
           className="flex items-center cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
-            setIsOpen((x)=>!x);
+            setIsOpen((x) => !x);
           }}
         >
           {(() => {
             const Comp = isOpen ? ChevronDown : ChevronRight;
-            return (
-              <Comp className="h-4 w-4 mr-1 flex-shrink-0" />
-            );
+            return <Comp className="h-4 w-4 mr-1 flex-shrink-0" />;
           })()}
         </div>
 
@@ -89,7 +82,7 @@ function DirectoryItem({
 
       {/* Children section with proper indentation */}
       {node.children && (
-        <div className={`pl-4 ${isOpen ? "" : "hidden"}`} >
+        <div className={`pl-4 ${isOpen ? "" : "hidden"}`}>
           {node.children.map((child) => (
             <DirectoryItem key={child.path} node={child} />
           ))}
@@ -99,16 +92,13 @@ function DirectoryItem({
   );
 }
 
-export function FileTree({ className }: FileTreeProps) {
+export function FileTree() {
   return (
     <div className="px-2 flex flex-col gap-2">
-      <h3 className="px-4 mb-2 text-sm font-medium">
-        Files
-      </h3>
-        {directoryStructure.map((node) => (
-          <DirectoryItem key={node.path} node={node} initIsOpen={true}  />
-        ))}
-      
+      <h3 className="px-4 mb-2 text-sm font-medium">Files</h3>
+      {directoryStructure.map((node) => (
+        <DirectoryItem key={node.path} node={node} initIsOpen={true} />
+      ))}
     </div>
   );
 }

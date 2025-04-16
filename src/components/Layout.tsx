@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { Header } from "./Header";
 import { RightSidebar } from "./RightSidebar";
@@ -9,7 +8,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { data: isOpen, open, close } = useRightSidebarStore();
+  const { data: isOpen, close } = useRightSidebarStore();
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -20,11 +19,6 @@ export function Layout({ children }: LayoutProps) {
         </aside>
         <main className="flex-1">
           <div className="container py-6">
-            <div className="mb-4 flex justify-end">
-              <Button variant="outline" size="sm" onClick={open}>
-                Open Sidebar
-              </Button>
-            </div>
             {children}
           </div>
         </main>

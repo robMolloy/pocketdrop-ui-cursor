@@ -12,15 +12,15 @@ export function Layout({ children }: LayoutProps) {
   const { data: isOpen, open, close } = useRightSidebarStore();
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      <Header onOpenSidebar={() => {}} />
+    <div className="relative flex min-h-screen flex-col">
+      <Header />
       <div className="flex flex-1">
-        <aside className="hidden w-64 border-r bg-background md:block h-[calc(100vh-3.5rem)]">
+        <aside className="hidden h-[calc(100vh-3.5rem)] w-64 border-r bg-background md:block">
           <Sidebar />
         </aside>
         <main className="flex-1">
           <div className="container py-6">
-            <div className="flex justify-end mb-4">
+            <div className="mb-4 flex justify-end">
               <Button variant="outline" size="sm" onClick={open}>
                 Open Sidebar
               </Button>

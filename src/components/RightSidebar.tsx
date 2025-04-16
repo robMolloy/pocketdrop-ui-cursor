@@ -1,11 +1,8 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface RightSidebarProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function RightSidebar({ isOpen, onClose }: RightSidebarProps) {
@@ -17,11 +14,9 @@ export function RightSidebar({ isOpen, onClose }: RightSidebarProps) {
         </SheetHeader>
         <div className="mt-4">
           {/* Add your right sidebar content here */}
-          <p className="text-sm text-muted-foreground">
-            Right sidebar content goes here
-          </p>
+          <p className="text-sm text-muted-foreground">Right sidebar content goes here</p>
         </div>
       </SheetContent>
     </Sheet>
-  )
-} 
+  );
+}

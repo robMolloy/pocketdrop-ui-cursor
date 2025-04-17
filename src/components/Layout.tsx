@@ -15,7 +15,7 @@ export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean 
             <Sidebar />
           </aside>
         )}
-        <main className="h-[calc(100vh-3.5rem)] overflow-y-auto">
+        <main className="h-[calc(100vh-3.5rem)] w-full overflow-y-auto">
           <div className="p-6">{p.children}</div>
         </main>
       </div>

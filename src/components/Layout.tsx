@@ -16,7 +16,7 @@ export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean 
           </aside>
         )}
         <main className="flex-1">
-          <div className="container p-6">{p.children}</div>
+          <div className="p-6">{p.children}</div>
         </main>
       </div>
       <RightSidebar isOpen={isOpen} onClose={close} />

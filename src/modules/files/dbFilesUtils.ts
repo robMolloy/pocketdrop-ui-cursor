@@ -93,7 +93,6 @@ export const updateFile = async (p: { pb: PocketBase; data: TFileRecord }) => {
 export const getFileRecord = async (p: { pb: PocketBase; id: string }) => {
   try {
     const resp = await p.pb.collection("files").getOne(p.id);
-    console.log(`dbFilesUtils.ts:${/*LL*/ 94}`, { resp });
 
     return fileRecordSchema.safeParse(resp);
   } catch (error) {

@@ -1,4 +1,5 @@
 import { RightSidebarContent } from "@/components/RightSidebar";
+import { FileDetails } from "@/components/FileDetails";
 import { pb } from "@/config/pocketbaseConfig";
 import { FileUploader } from "@/modules/files/FileUploader";
 import { getFileFromFileRecord } from "@/modules/files/dbFilesUtils";
@@ -35,7 +36,7 @@ export default function BrowsePage() {
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
+        <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -52,7 +53,7 @@ export default function BrowsePage() {
 
                 rightSidebarStore.setData(
                   <RightSidebarContent title="File Details">
-                    <pre>{JSON.stringify({ file }, undefined, 2)}</pre>
+                    <FileDetails file={file} />
                   </RightSidebarContent>,
                 );
               }}

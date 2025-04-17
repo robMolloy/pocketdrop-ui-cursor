@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { RightSidebarContent } from "@/components/RightSidebar";
 import { pb } from "@/config/pocketbaseConfig";
 import { FileUploader } from "@/modules/files/FileUploader";
 import { getFileFromFileRecord } from "@/modules/files/dbFilesUtils";
@@ -32,9 +32,6 @@ export default function BrowsePage() {
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
           <p className="flex-1 text-lg">{fullPath}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={rightSidebarStore.open} className="mt-4">
-          Open Sidebar
-        </Button>
       </div>
 
       <div className="mb-6">
@@ -52,6 +49,12 @@ export default function BrowsePage() {
               onClick={async () => {
                 const result = await getFileFromFileRecord({ pb, data: file });
                 if (result.success) setImageBlob(result.data.file);
+
+                rightSidebarStore.setData(
+                  <RightSidebarContent title="File Details">
+                    <pre>{JSON.stringify({ file }, undefined, 2)}</pre>
+                  </RightSidebarContent>,
+                );
               }}
               className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
             >

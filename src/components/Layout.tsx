@@ -4,7 +4,7 @@ import { RightSidebar } from "./RightSidebar";
 import { Sidebar } from "./Sidebar";
 
 export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean }) {
-  const { data: isOpen, close } = useRightSidebarStore();
+  const rightSidebarStore = useRightSidebarStore();
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -19,7 +19,10 @@ export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean 
           <div className="p-6">{p.children}</div>
         </main>
       </div>
-      <RightSidebar isOpen={isOpen} onClose={close} />
+      <RightSidebar
+        isOpen={rightSidebarStore.data !== null}
+        onClose={() => rightSidebarStore.setData(null)}
+      />
     </div>
   );
 }

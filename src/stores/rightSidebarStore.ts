@@ -1,22 +1,19 @@
+import { ReactNode } from "react";
 import { create } from "zustand";
 
-interface SidebarState {
-  data: boolean;
-  setData: (data: boolean) => void;
-}
+type TState = ReactNode | null;
+type TStore = {
+  data: TState;
+  setData: (data: TState) => void;
+};
 
-const useInitSidebarStore = create<SidebarState>()((set) => ({
-  data: false,
-  setData: (x) => set({ data: x }),
+const useInitSidebarStore = create<TStore>()((set) => ({
+  data: null,
+  setData: (data) => set({ data }),
 }));
 
 export const useRightSidebarStore = () => {
   const { data, setData } = useInitSidebarStore();
 
-  return {
-    data,
-    setData,
-    open: () => setData(true),
-    close: () => setData(false),
-  };
+  return { data, setData };
 };

@@ -1,3 +1,4 @@
+import { AuthForm } from "@/components/AuthForm";
 import { Layout } from "@/components/Layout";
 import { pb } from "@/config/pocketbaseConfig";
 import { useAuthDataStore, useAuthDataSync } from "@/stores/authDataStore";
@@ -14,10 +15,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      {/* <pre>{JSON.stringify({ v: 1, x: pb.authStore, y: authDataStore.data }, undefined, 2)}</pre> */}
+
       <Layout showLeftSidebar={authDataStore.data?.token !== undefined}>
         {authDataStore.data?.token !== undefined && <Component {...pageProps} />}
         {(authDataStore.data === null || authDataStore.data?.token === undefined) && (
-          <>logged out</>
+          <div className="flex justify-center">
+            <AuthForm />
+          </div>
         )}
         {authDataStore.data === undefined && <>loading...</>}
       </Layout>

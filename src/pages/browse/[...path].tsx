@@ -43,7 +43,7 @@ export default function BrowsePage() {
               pb,
               id: "m96qfbxdn7w41sy",
             });
-            if (f1.success) setImageBlob(f1.data.file);
+            // if (f1.success) setImageBlob(f1.data.file);
             console.log(`[...path].tsx:${/*LL*/ 43}`, { f1 });
           }}
           className="mt-4"
@@ -72,7 +72,7 @@ export default function BrowsePage() {
       {imageBlob && <img src={URL.createObjectURL(imageBlob)} alt="Downloaded image" />}
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
+        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">

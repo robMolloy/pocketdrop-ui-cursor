@@ -2,6 +2,8 @@ import PocketBase, { RecordModel, RecordSubscription } from "pocketbase";
 import { z } from "zod";
 
 const fileRecordSchema = z.object({
+  collectionId: z.string(),
+  collectionName: z.string(),
   id: z.string(),
   file: z.string(),
   filePath: z.string(),
@@ -91,8 +93,9 @@ export const updateFile = async (p: { pb: PocketBase; data: TFileRecord }) => {
 export const getFileRecord = async (p: { pb: PocketBase; id: string }) => {
   try {
     const resp = await p.pb.collection("files").getOne(p.id);
+    console.log(`dbFilesUtils.ts:${/*LL*/ 94}`, { resp });
 
-    return { success: true, data: resp } as const;
+    return fileRecordSchema.safeParse(resp);
   } catch (error) {
     return { success: false, error } as const;
   }
@@ -100,11 +103,12 @@ export const getFileRecord = async (p: { pb: PocketBase; id: string }) => {
 export const getFile = async (p: { pb: PocketBase; id: string }) => {
   try {
     const fileRecord = await getFileRecord(p);
+    console.log(`dbFilesUtils.ts:${/*LL*/ 103}`, { fileRecord });
 
     if (!fileRecord.success) return fileRecord;
 
     const fileUrl = p.pb.files.getURL(fileRecord.data, fileRecord.data.file);
-
+    console.log(`dbFilesUtils.ts:${/*LL*/ 103}`, { fileUrl });
     if (!fileUrl) return { success: false, error: "File not found" } as const;
 
     const fileResp = await fetch(fileUrl);

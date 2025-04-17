@@ -100,15 +100,28 @@ export const getFileRecord = async (p: { pb: PocketBase; id: string }) => {
     return { success: false, error } as const;
   }
 };
+export const getFileFromFileRecord = async (p: { pb: PocketBase; data: TFileRecord }) => {
+  try {
+    const fileUrl = p.pb.files.getURL(p.data, p.data.file);
+    if (!fileUrl) return { success: false, error: "File not found" } as const;
+
+    const fileResp = await fetch(fileUrl);
+    const file = await fileResp.blob();
+
+    if (!file) return { success: false, error: "File not found" } as const;
+
+    return { success: true, data: { ...p.data, file } } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
 export const getFile = async (p: { pb: PocketBase; id: string }) => {
   try {
     const fileRecord = await getFileRecord(p);
-    console.log(`dbFilesUtils.ts:${/*LL*/ 103}`, { fileRecord });
 
     if (!fileRecord.success) return fileRecord;
 
     const fileUrl = p.pb.files.getURL(fileRecord.data, fileRecord.data.file);
-    console.log(`dbFilesUtils.ts:${/*LL*/ 103}`, { fileUrl });
     if (!fileUrl) return { success: false, error: "File not found" } as const;
 
     const fileResp = await fetch(fileUrl);

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FileTree } from "./FileTree";
 import React, { ReactNode } from "react";
+import { pb } from "@/config/pocketbaseConfig";
 
-const Wrapper = (p: { children: ReactNode, href?: string }) =>
+const Wrapper = (p: { children: ReactNode; href?: string }) =>
   p.href ? <Link href={p.href}>{p.children}</Link> : p.children;
 
 const SidebarButton = (p: {
@@ -13,18 +14,19 @@ const SidebarButton = (p: {
   Icon: typeof Home;
   children: ReactNode;
   isHighlighted: boolean;
+  onClick?: () => void;
 }) => {
   return (
     <Wrapper href={p.href}>
       <Button
         variant={p.isHighlighted ? "secondary" : "ghost"}
         className="w-full justify-start pl-6"
+        onClick={p.onClick}
       >
         <p.Icon className="mr-2 h-4 w-4" />
         {p.children}
       </Button>
     </Wrapper>
-
   );
 };
 
@@ -55,16 +57,9 @@ export function Sidebar() {
           >
             Settings
           </SidebarButton>
-          <SidebarButton Icon={LogOut} isHighlighted={false}>
+          <SidebarButton Icon={LogOut} isHighlighted={false} onClick={() => pb.authStore.clear()}>
             Log Out
           </SidebarButton>
-          {/* <Button
-            variant="ghost"
-            className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Log Out
-          </Button> */}
         </div>
       </div>
     </div>

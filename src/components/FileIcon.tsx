@@ -10,11 +10,7 @@ export function FileIcon({ fileName }: { fileName: string }) {
 
         if (["txt", "md", "json", "csv"].includes(extension)) return FileText;
 
-        if (
-          ["js", "jsx", "ts", "tsx", "html", "css", "py", "java", "cpp", "c"].includes(
-            extension,
-          )
-        )
+        if (["js", "jsx", "ts", "tsx", "html", "css", "py", "java", "cpp", "c"].includes(extension))
           return FileCode;
 
         if (["zip", "rar", "7z", "tar", "gz"].includes(extension)) return FileArchive;

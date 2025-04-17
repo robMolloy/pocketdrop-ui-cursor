@@ -23,7 +23,7 @@ export default function BrowsePage() {
   });
 
   return (
-    <div className="mx-auto p-4">
+    <>
       <div className="mb-6">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
@@ -62,6 +62,6 @@ export default function BrowsePage() {
           );
         })}
       </div>
-    </div>
+    </>
   );
 }

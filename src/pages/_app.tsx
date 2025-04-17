@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/AuthForm";
+import { AuthForm } from "@/modules/auth/AuthForm";
 import { Layout } from "@/components/Layout";
 import { PageLoading } from "@/components/PageLoading";
 import { pb } from "@/config/pocketbaseConfig";

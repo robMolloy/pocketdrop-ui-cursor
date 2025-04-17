@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { pb } from "@/config/pocketbaseConfig";
+import { logout } from "@/modules/auth/dbAuthUtils";
 import { Home, LogOut, Settings, Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { ReactNode } from "react";
 import { FileTree } from "./FileTree";
-import React, { ReactNode } from "react";
-import { pb } from "@/config/pocketbaseConfig";
 
 const Wrapper = (p: { children: ReactNode; href?: string }) =>
   p.href ? <Link href={p.href}>{p.children}</Link> : p.children;
@@ -57,7 +58,7 @@ export function Sidebar() {
           >
             Settings
           </SidebarButton>
-          <SidebarButton Icon={LogOut} isHighlighted={false} onClick={() => pb.authStore.clear()}>
+          <SidebarButton Icon={LogOut} isHighlighted={false} onClick={() => logout({ pb })}>
             Log Out
           </SidebarButton>
         </div>

@@ -1,5 +1,6 @@
 import { AuthForm } from "@/components/AuthForm";
 import { Layout } from "@/components/Layout";
+import { PageLoading } from "@/components/PageLoading";
 import { pb } from "@/config/pocketbaseConfig";
 import { useAuthDataStore, useAuthDataSync } from "@/stores/authDataStore";
 import { useThemeStore } from "@/stores/themeStore";
@@ -24,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <AuthForm />
           </div>
         )}
-        {authDataStore.data === undefined && <>loading...</>}
+        {authDataStore.data === undefined && <PageLoading />}
       </Layout>
     </>
   );

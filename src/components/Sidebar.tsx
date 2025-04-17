@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { ReactNode } from "react";
 import { FileTree } from "./FileTree";
 
-const Wrapper = (p: { children: ReactNode; href?: string }) =>
+const SidebarButtonWrapper = (p: { children: ReactNode; href?: string }) =>
   p.href ? <Link href={p.href}>{p.children}</Link> : p.children;
 
 const SidebarButton = (p: {
@@ -18,7 +18,7 @@ const SidebarButton = (p: {
   onClick?: () => void;
 }) => {
   return (
-    <Wrapper href={p.href}>
+    <SidebarButtonWrapper href={p.href}>
       <Button
         variant={p.isHighlighted ? "secondary" : "ghost"}
         className="w-full justify-start pl-6"
@@ -27,7 +27,7 @@ const SidebarButton = (p: {
         <p.Icon className="mr-2 h-4 w-4" />
         {p.children}
       </Button>
-    </Wrapper>
+    </SidebarButtonWrapper>
   );
 };
 

@@ -16,16 +16,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      {/* <pre>{JSON.stringify({ v: 1, x: pb.authStore, y: authDataStore.data }, undefined, 2)}</pre> */}
-
-      <Layout showLeftSidebar={authDataStore.data?.token !== undefined}>
-        {authDataStore.data?.token !== undefined && <Component {...pageProps} />}
-        {(authDataStore.data === null || authDataStore.data?.token === undefined) && (
+      <Layout showLeftSidebar={!!authDataStore.data?.token}>
+        {!!authDataStore.data?.token && <Component {...pageProps} />}
+        {authDataStore.data === null && (
           <div className="flex justify-center">
             <AuthForm />
           </div>
         )}
-        {authDataStore.data === undefined && <PageLoading />}
+        {(authDataStore.data === undefined || !authDataStore.data?.token) && <PageLoading />}
       </Layout>
     </>
   );

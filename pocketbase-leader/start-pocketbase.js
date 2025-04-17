@@ -4,6 +4,8 @@
 const { spawn } = require("child_process");
 const fse = require("fs-extra");
 
+const basePath = __dirname;
+
 const copyDir = async (sourceDir, destDir) => {
   try {
     await fse.ensureDir(destDir);
@@ -12,8 +14,7 @@ const copyDir = async (sourceDir, destDir) => {
 
     return { success: true };
   } catch (error) {
-    console.error("Error copying seed data:", error.message);
-    return { success: false };
+    return { success: false, error };
   }
 };
 
@@ -25,22 +26,20 @@ async function deleteDirIfExists(dirPath) {
 
     return { success: true };
   } catch (error) {
-    return { success: false };
+    return { success: false, error };
   }
 }
 
-const createTimestamp = () => {
-  return new Date().toISOString();
-};
+const createTimestamp = () => new Date().toISOString();
 
-const seedDir = "pocketbase-leader/pb_data_backup/seed";
-const spawnDir = "./pocketbase-leader/pb_data";
+const seedDir = `${basePath}/pb_data_backup/seed`;
+const spawnDir = `${basePath}/pb_data`;
 
 const main = async () => {
   await deleteDirIfExists(spawnDir);
   await copyDir(seedDir, spawnDir);
 
-  const pocketbase = spawn("./pocketbase-leader/pocketbase", ["serve"], {
+  const pocketbase = spawn(`${basePath}/pocketbase`, ["serve"], {
     stdio: "inherit",
     env: { ...process.env, FORCE_COLOR: "true" },
   });
@@ -50,7 +49,7 @@ const main = async () => {
   });
 
   pocketbase.on("close", async () => {
-    const newDir = `./pocketbase-leader/pb_data_backup/caches/${createTimestamp()}`;
+    const newDir = `${basePath}/pb_data_backup/caches/${createTimestamp()}`;
     await copyDir(spawnDir, newDir);
     await deleteDirIfExists(spawnDir);
     process.exit(0);

@@ -4,6 +4,9 @@ import { useRouter } from "next/router";
 import { FileUploader } from "@/modules/files/FileUploader";
 import { useFilesStore } from "@/modules/files/filesStore";
 import { File, Folder } from "lucide-react";
+import { getFile, getFileRecord } from "@/modules/files/dbFilesUtils";
+import { pb } from "@/config/pocketbaseConfig";
+import { useState } from "react";
 
 export default function BrowsePage() {
   const router = useRouter();
@@ -14,9 +17,11 @@ export default function BrowsePage() {
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
 
+  const [imageBlob, setImageBlob] = useState<Blob>();
+
   // Filter files for current path
-  const currentPathFiles = filesStore.data.filter(file => {
-    const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf('/'));
+  const currentPathFiles = filesStore.data.filter((file) => {
+    const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
     return fileDir === fullPath;
   });
 
@@ -30,7 +35,41 @@ export default function BrowsePage() {
         <Button variant="outline" size="sm" onClick={rightSidebarStore.open} className="mt-4">
           Open Sidebar
         </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            const f1 = await getFileRecord({
+              pb,
+              id: "m96qfbxdn7w41sy",
+            });
+            if (f1.success) setImageBlob(f1.data.file);
+            console.log(`[...path].tsx:${/*LL*/ 43}`, { f1 });
+          }}
+          className="mt-4"
+        >
+          getFileRecord
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            const f1 = await getFile({ pb, id: "m96qfbxdn7w41sy" });
+            console.log(`[...path].tsx:${/*LL*/ 54}`, { f1 });
+            if (!f1.success) return;
+            setImageBlob(f1.data.file);
+            console.log(`[...path].tsx:${/*LL*/ 54}`, {
+              x: f1.data.file,
+              y: URL.createObjectURL(f1.data.file),
+            });
+          }}
+          className="mt-4"
+        >
+          getFile
+        </Button>
       </div>
+
+      {imageBlob && <img src={URL.createObjectURL(imageBlob)} alt="Downloaded image" />}
 
       <div className="mb-6">
         <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
@@ -38,20 +77,20 @@ export default function BrowsePage() {
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {currentPathFiles.map((file) => {
-          const fileName = file.filePath.split('/').pop() || '';
+          const fileName = file.filePath.split("/").pop() || "";
           const isDirectory = false; // TODO: Implement directory detection
 
           return (
             <div
               key={file.id}
-              className="flex flex-col items-center p-4 rounded-lg border hover:bg-accent cursor-pointer"
+              className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
             >
               {isDirectory ? (
-                <Folder className="h-12 w-12 mb-2" />
+                <Folder className="mb-2 h-12 w-12" />
               ) : (
-                <File className="h-12 w-12 mb-2" />
+                <File className="mb-2 h-12 w-12" />
               )}
-              <span className="text-sm text-center break-all">{fileName}</span>
+              <span className="break-all text-center text-sm">{fileName}</span>
             </div>
           );
         })}

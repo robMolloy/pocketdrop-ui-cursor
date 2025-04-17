@@ -1,7 +1,7 @@
-import { TFile } from "@/modules/files/dbFilesUtils";
+import { TFileRecord } from "@/modules/files/dbFilesUtils";
 import { create } from "zustand";
 
-type TState = TFile[];
+type TState = TFileRecord[];
 
 export const useFilesStore = create<{
   data: TState;

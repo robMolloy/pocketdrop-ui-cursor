@@ -1,14 +1,15 @@
 import PocketBase, { RecordModel, RecordSubscription } from "pocketbase";
 import { z } from "zod";
 
-const fileSchema = z.object({
+const fileRecordSchema = z.object({
   id: z.string(),
-  // file: z.instanceof(File1),
+  file: z.string(),
   filePath: z.string(),
   created: z.string(),
   updated: z.string(),
 });
-export type TFile = z.infer<typeof fileSchema>;
+export type TFileRecord = z.infer<typeof fileRecordSchema>;
+export type TFile = Omit<TFileRecord, "file"> & { file: File };
 
 export const listFiles = async (p: { pb: PocketBase }) => {
   try {
@@ -17,7 +18,7 @@ export const listFiles = async (p: { pb: PocketBase }) => {
     });
 
     const data = initData
-      .map((x) => fileSchema.safeParse(x))
+      .map((x) => fileRecordSchema.safeParse(x))
       .filter((x) => x.success)
       .map((x) => x.data);
     return { success: true, data } as const;
@@ -31,7 +32,6 @@ export const subscribeToFiles = async (p: {
   onCreateFile: (e: RecordSubscription<RecordModel>) => void;
   onUpdateFile: (e: RecordSubscription<RecordModel>) => void;
 }) => {
-  // Subscribe to changes in any record in the collection
   p.pb.collection("files").subscribe("*", (e) => {
     if (e.action) p.onCreateFile(e);
   });
@@ -40,7 +40,7 @@ export const subscribeToFiles = async (p: {
 
 export const smartSubscribeToFiles = async (p: {
   pb: PocketBase;
-  onChange: (x: TFile[]) => void;
+  onChange: (x: TFileRecord[]) => void;
 }) => {
   const listFilesResp = await listFiles(p);
   if (!listFilesResp.success) return listFilesResp;
@@ -49,18 +49,18 @@ export const smartSubscribeToFiles = async (p: {
   p.onChange(allFiles);
   const unsub = p.pb.collection("files").subscribe("*", (e) => {
     if (e.action === "create") {
-      const parseResp = fileSchema.safeParse(e.record);
+      const parseResp = fileRecordSchema.safeParse(e.record);
       if (parseResp.success) allFiles.push(parseResp.data);
     }
     if (e.action === "update") {
-      const parseResp = fileSchema.safeParse(e.record);
+      const parseResp = fileRecordSchema.safeParse(e.record);
       if (!parseResp.success) return;
 
       allFiles = allFiles.filter((x) => parseResp.data?.id !== x.id);
       allFiles.push(parseResp.data);
     }
     if (e.action === "delete") {
-      const parseResp = fileSchema.safeParse(e.record);
+      const parseResp = fileRecordSchema.safeParse(e.record);
       if (!parseResp.success) return;
 
       allFiles = allFiles.filter((x) => parseResp.data?.id !== x.id);
@@ -79,3 +79,58 @@ export const createFile = async (p: { pb: PocketBase; data: { file: File; filePa
     return { success: false, error } as const;
   }
 };
+export const updateFile = async (p: { pb: PocketBase; data: TFileRecord }) => {
+  try {
+    const resp = await p.pb.collection("files").update(p.data.id, p.data);
+    return { success: true, data: resp } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
+
+export const getFileRecord = async (p: { pb: PocketBase; id: string }) => {
+  try {
+    const resp = await p.pb.collection("files").getOne(p.id);
+
+    return { success: true, data: resp } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
+export const getFile = async (p: { pb: PocketBase; id: string }) => {
+  try {
+    const fileRecord = await getFileRecord(p);
+
+    if (!fileRecord.success) return fileRecord;
+
+    const fileUrl = p.pb.files.getURL(fileRecord.data, fileRecord.data.file);
+
+    if (!fileUrl) return { success: false, error: "File not found" } as const;
+
+    const fileResp = await fetch(fileUrl);
+    const file = await fileResp.blob();
+
+    if (!file) return { success: false, error: "File not found" } as const;
+
+    return { success: true, data: { ...fileRecord.data, file } } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
+
+// export const upsertFile = async (p: { pb: PocketBase; data: TFile }) => {
+//   try {
+//     const getResp = await p.pb.collection("files").getOne(p.data.id);
+//     // const upsertResp = getResp.success ? updateFile(p) : createFile(p);
+//     const upsertResp = (() => {
+//       if (getResp.success) return updateFile(p);
+
+//       const {};
+//       getResp.success ? updateFile(p) : createFile(p);
+//     })();
+
+//     return { success: true, data: upsertResp } as const;
+//   } catch (error) {
+//     return { success: false, error } as const;
+//   }
+// };

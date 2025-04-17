@@ -36,7 +36,7 @@ export function Sidebar() {
 
   return (
     <div className={"flex h-full flex-col"}>
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="flex-1 overflow-y-auto p-2">
         <div className="flex flex-col gap-1">
           <SidebarButton href="/" Icon={Home} isHighlighted={router.pathname === "/"}>
             Home
@@ -49,8 +49,8 @@ export function Sidebar() {
       </div>
 
       {/* Fixed bottom section */}
-      <div className="border-t p-4">
-        <div className="flex flex-col gap-2">
+      <div className="border-t p-2">
+        <div className="flex flex-col gap-1">
           <SidebarButton
             href="/settings"
             Icon={Settings}

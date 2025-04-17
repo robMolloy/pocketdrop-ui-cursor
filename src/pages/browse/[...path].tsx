@@ -1,14 +1,11 @@
 import { FileDetails } from "@/components/FileDetails";
 import { FileIcon } from "@/components/FileIcon";
 import { RightSidebarContent } from "@/components/RightSidebar";
-import { pb } from "@/config/pocketbaseConfig";
 import { FileUploader } from "@/modules/files/FileUploader";
-import { getFileFromFileRecord } from "@/modules/files/dbFilesUtils";
 import { useFilesStore } from "@/modules/files/filesStore";
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { Folder } from "lucide-react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 export default function BrowsePage() {
   const router = useRouter();
@@ -18,8 +15,6 @@ export default function BrowsePage() {
   const fullPath = path ? `/${Array.isArray(path) ? path.join("/") : path}` : "";
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
-
-  const [imageBlob, setImageBlob] = useState<Blob>();
 
   // Filter files for current path
   const currentPathFiles = filesStore.data.filter((file) => {
@@ -37,7 +32,7 @@ export default function BrowsePage() {
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
+        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -49,9 +44,6 @@ export default function BrowsePage() {
             <div
               key={file.id}
               onClick={async () => {
-                const result = await getFileFromFileRecord({ pb, data: file });
-                if (result.success) setImageBlob(result.data.file);
-
                 rightSidebarStore.setData(
                   <RightSidebarContent title="File Details">
                     <FileDetails file={file} />
@@ -70,16 +62,6 @@ export default function BrowsePage() {
           );
         })}
       </div>
-
-      {imageBlob && (
-        <div className="mb-6">
-          <img
-            src={URL.createObjectURL(imageBlob)}
-            alt="Selected file"
-            className="h-96 w-96 rounded-lg border"
-          />
-        </div>
-      )}
     </div>
   );
 }

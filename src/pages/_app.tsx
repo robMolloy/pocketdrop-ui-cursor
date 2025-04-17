@@ -22,16 +22,22 @@ export default function App({ Component, pageProps }: AppProps) {
     smartSubscribeToFiles({ pb: pb, onChange: (x) => filesStore.setData(x) });
   }, []);
 
+  const authState = (() => {
+    if (authDataStore.data === undefined) return "loading" as const;
+    if (!!authDataStore.data?.token) return "loggedIn" as const;
+    return "loggedOut" as const;
+  })();
+
   return (
     <>
       <Layout showLeftSidebar={!!authDataStore.data?.token}>
-        {!!authDataStore.data?.token && <Component {...pageProps} />}
-        {authDataStore.data === null && (
+        {authState === "loggedIn" && <Component {...pageProps} />}
+        {authState === "loggedOut" && (
           <div className="flex justify-center">
             <AuthForm />
           </div>
         )}
-        {(authDataStore.data === undefined || !authDataStore.data?.token) && <PageLoading />}
+        {authState === "loading" && <PageLoading />}
       </Layout>
     </>
   );

@@ -6,6 +6,9 @@ import { useAuthDataStore, useAuthDataSync } from "@/stores/authDataStore";
 import { useThemeStore } from "@/stores/themeStore";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import { useFilesStore } from "@/modules/files/filesStore";
+import { useEffect } from "react";
+import { smartSubscribeToFiles } from "@/modules/files/dbFilesUtils";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { useThemeStoreSideEffect } = useThemeStore();
@@ -13,6 +16,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const authDataStore = useAuthDataStore();
   useAuthDataSync({ pb: pb });
+
+  const filesStore = useFilesStore();
+  useEffect(() => {
+    smartSubscribeToFiles({ pb: pb, onChange: (x) => filesStore.setData(x) });
+  }, []);
 
   return (
     <>

@@ -1,11 +1,12 @@
-import { RightSidebarContent } from "@/components/RightSidebar";
 import { FileDetails } from "@/components/FileDetails";
+import { FileIcon } from "@/components/FileIcon";
+import { RightSidebarContent } from "@/components/RightSidebar";
 import { pb } from "@/config/pocketbaseConfig";
 import { FileUploader } from "@/modules/files/FileUploader";
 import { getFileFromFileRecord } from "@/modules/files/dbFilesUtils";
 import { useFilesStore } from "@/modules/files/filesStore";
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
-import { File, Folder } from "lucide-react";
+import { Folder } from "lucide-react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -36,7 +37,7 @@ export default function BrowsePage() {
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
+        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -62,7 +63,7 @@ export default function BrowsePage() {
               {isDirectory ? (
                 <Folder className="mb-2 h-12 w-12" />
               ) : (
-                <File className="mb-2 h-12 w-12" />
+                <FileIcon fileName={fileName} />
               )}
               <span className="break-all text-center text-sm">{fileName}</span>
             </div>

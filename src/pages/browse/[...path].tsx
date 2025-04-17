@@ -37,16 +37,6 @@ export default function BrowsePage() {
         </Button>
       </div>
 
-      {imageBlob && (
-        <div className="mb-6">
-          <img
-            src={URL.createObjectURL(imageBlob)}
-            alt="Selected file"
-            className="h-96 w-96 rounded-lg border"
-          />
-        </div>
-      )}
-
       <div className="mb-6">
         <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
       </div>
@@ -75,6 +65,16 @@ export default function BrowsePage() {
           );
         })}
       </div>
+
+      {imageBlob && (
+        <div className="mb-6">
+          <img
+            src={URL.createObjectURL(imageBlob)}
+            alt="Selected file"
+            className="h-96 w-96 rounded-lg border"
+          />
+        </div>
+      )}
     </div>
   );
 }

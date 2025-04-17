@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --noemit --watch",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:start": "./pocketbase-leader/pocketbase serve",
+    "db:start2": "./scripts/start-pocketbase-leader-2.js",
+    "db:start3": "./scripts/start-pocketbase-leader-3.js",
+    "dev1": "npm run dev",
+    "dev2": "npm run tsc",
+    "dev3": "npm run db:start"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.7",
@@ -30,6 +36,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.23",
+    "fs-extra": "^11.3.0",
     "postcss": "^8",
     "prettier-plugin-tailwindcss": "^0.6.5",
     "tailwindcss": "^3.4.1",

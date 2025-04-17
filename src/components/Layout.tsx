@@ -11,12 +11,16 @@ export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean 
       <Header />
       <div className="flex flex-1">
         {p.showLeftSidebar && (
-          <aside className="hidden h-[calc(100vh-3.5rem)] w-64 border-r bg-background md:block">
+          <aside className="hidden h-[calc(100vh-3.5rem)] w-64 overflow-y-auto border-r bg-background md:block">
             <Sidebar />
           </aside>
         )}
-        <main className="flex-1">
-          <div className="p-6">{p.children}</div>
+        <main className="h-[calc(100vh-3.5rem)]">
+          <div className={"flex h-full flex-col"}>
+            <div className="flex-1 overflow-y-auto p-3">
+              <div className="p-6">{p.children}</div>
+            </div>
+          </div>
         </main>
       </div>
       <RightSidebar isOpen={isOpen} onClose={close} />

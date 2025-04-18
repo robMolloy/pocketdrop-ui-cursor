@@ -1,18 +1,15 @@
+import { FileUploader } from "@/modules/files/FileUploader";
+import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { Cloud, Upload } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
-import { FileUploader } from "@/modules/files/FileUploader";
-import { useState } from "react";
-import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { RightSidebarContent } from "./RightSidebar";
+import { ThemeToggle } from "./ThemeToggle";
+import { Button } from "./ui/button";
 
 export function Header() {
   const router = useRouter();
   const isBrowsePage = router.pathname.startsWith("/browse");
-  const [isOpen, setIsOpen] = useState(false);
 
   const rightSidebarStore = useRightSidebarStore();
 

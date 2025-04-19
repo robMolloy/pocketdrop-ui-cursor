@@ -1,4 +1,10 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { ReactNode } from "react";
 
@@ -12,6 +18,7 @@ export const RightSidebarContent = (p: { title: string; children: ReactNode }) =
     <>
       <SheetHeader>
         <SheetTitle>{p.title}</SheetTitle>
+        <SheetDescription className="hidden">This is the right sidebar.</SheetDescription>
       </SheetHeader>
       <div className="mt-4">{p.children}</div>
     </>
@@ -22,15 +29,12 @@ export function RightSidebar({ isOpen, onClose }: RightSidebarProps) {
   const rightSidebarStore = useRightSidebarStore();
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+      <SheetContent
+        side="right"
+        className="w-[300px] sm:w-[400px]"
+        aria-describedby="right-sidebar"
+      >
         {rightSidebarStore.data}
-        {/* <SheetHeader>
-          <SheetTitle>Details</SheetTitle>
-        </SheetHeader>
-        <div className="mt-4">
-          {rightSidebarStore.data}
-          <p className="text-sm text-muted-foreground">Right sidebar content goes here</p>
-        </div> */}
       </SheetContent>
     </Sheet>
   );

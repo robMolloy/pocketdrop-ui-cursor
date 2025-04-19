@@ -16,7 +16,6 @@ export function FileUploader({ currentPath, onUploadComplete }: FileUploaderProp
     async (acceptedFiles: File[]) => {
       setIsUploading(true);
       try {
-        console.log(`FileUploader.tsx:${/*LL*/ 19}`, { acceptedFiles });
         for (const file of acceptedFiles) {
           const formData = new FormData();
           const filePath = `${currentPath}/${file.name}`;

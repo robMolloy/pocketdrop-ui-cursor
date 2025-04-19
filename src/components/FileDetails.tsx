@@ -1,6 +1,6 @@
 import { FileIcon } from "@/components/FileIcon";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { TFileRecord, deleteFile } from "@/modules/files/dbFilesUtils";
+import { TFileRecord, deleteFile, downloadFile, getFile } from "@/modules/files/dbFilesUtils";
 import { Calendar, FileText, Folder, Hash, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { pb } from "@/config/pocketbaseConfig";
@@ -41,7 +41,15 @@ export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
             <div className="flex text-center text-xl">{fileName}</div>
 
             <div className="mt-2 flex gap-2">
-              <Button className="flex-1">Download</Button>
+              <Button
+                className="flex-1"
+                onClick={async () => {
+                  const resp = await getFile({ pb, id: p.file.id });
+                  if (resp.success) downloadFile({ data: resp.data });
+                }}
+              >
+                Download
+              </Button>
               <Button variant="destructive" className="flex flex-1 gap-2" onClick={handleDelete}>
                 <Trash2 size={40} />
                 Delete

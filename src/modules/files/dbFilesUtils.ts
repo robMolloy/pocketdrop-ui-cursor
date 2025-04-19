@@ -11,7 +11,7 @@ const fileRecordSchema = z.object({
   updated: z.string(),
 });
 export type TFileRecord = z.infer<typeof fileRecordSchema>;
-export type TFile = Omit<TFileRecord, "file"> & { file: File };
+export type TFile = Omit<TFileRecord, "file"> & { file: Blob };
 
 export const listFiles = async (p: { pb: PocketBase }) => {
   try {
@@ -127,8 +127,9 @@ export const getFile = async (p: { pb: PocketBase; id: string }) => {
     const file = await fileResp.blob();
 
     if (!file) return { success: false, error: "File not found" } as const;
+    const data: TFile = { ...fileRecord.data, file };
 
-    return { success: true, data: { ...fileRecord.data, file } } as const;
+    return { success: true, data } as const;
   } catch (error) {
     return { success: false, error } as const;
   }
@@ -141,6 +142,18 @@ export const deleteFile = async (p: { pb: PocketBase; id: string }) => {
   } catch (error) {
     return { success: false, error } as const;
   }
+};
+
+export const downloadFile = async (p: { data: TFile }) => {
+  const downloadUrl = window.URL.createObjectURL(p.data.file);
+  const a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = p.data.filePath.split("/").slice(-1).join("");
+  document.body.appendChild(a);
+  a.click();
+
+  window.URL.revokeObjectURL(downloadUrl);
+  a.remove();
 };
 
 // export const upsertFile = async (p: { pb: PocketBase; data: TFile }) => {

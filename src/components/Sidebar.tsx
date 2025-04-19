@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { pb } from "@/config/pocketbaseConfig";
 import { logout } from "@/modules/auth/dbAuthUtils";
-import { Home, LogOut, Settings, Star } from "lucide-react";
+import { Home, LogOut, Settings, Star, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
@@ -51,6 +51,9 @@ export function Sidebar() {
       {/* Fixed bottom section */}
       <div className="border-t p-2">
         <div className="flex flex-col gap-1">
+          <SidebarButton href="/users" Icon={Users} isHighlighted={router.pathname === "/users"}>
+            Users
+          </SidebarButton>
           <SidebarButton
             href="/settings"
             Icon={Settings}

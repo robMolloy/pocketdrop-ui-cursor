@@ -32,7 +32,7 @@ export default function BrowsePage() {
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
+        <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -46,7 +46,7 @@ export default function BrowsePage() {
               onClick={async () => {
                 rightSidebarStore.setData(
                   <RightSidebarContent title="File Details">
-                    <FileDetails file={file} />
+                    <FileDetails file={file} onDelete={() => { rightSidebarStore.close() }} />
                   </RightSidebarContent>,
                 );
               }}

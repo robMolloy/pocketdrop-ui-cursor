@@ -7,7 +7,7 @@ import { pb } from "@/config/pocketbaseConfig";
 
 
 
-export function FileDetails(p: { file: TFileRecord; onDelete?: () => void }) {
+export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
 
 
     const fileName = p.file.filePath.split("/").pop() || "";
@@ -17,7 +17,7 @@ export function FileDetails(p: { file: TFileRecord; onDelete?: () => void }) {
         const result = await deleteFile({ pb, id: p.file.id });
         if (result.success) {
 
-            p.onDelete?.();
+            p.onDelete();
         } else {
 
         }

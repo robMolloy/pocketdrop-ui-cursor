@@ -15,5 +15,5 @@ const useInitSidebarStore = create<TStore>()((set) => ({
 export const useRightSidebarStore = () => {
   const { data, setData } = useInitSidebarStore();
 
-  return { data, setData };
+  return { data, setData, close: () => setData(null) };
 };

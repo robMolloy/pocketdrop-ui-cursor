@@ -1,12 +1,27 @@
 import { FileIcon } from "@/components/FileIcon";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { TFileRecord } from "@/modules/files/dbFilesUtils";
-import { Calendar, FileText, Folder, Hash } from "lucide-react";
+import { TFileRecord, deleteFile } from "@/modules/files/dbFilesUtils";
+import { Calendar, FileText, Folder, Hash, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { pb } from "@/config/pocketbaseConfig";
 
-export function FileDetails(p: { file: TFileRecord }) {
+
+
+export function FileDetails(p: { file: TFileRecord; onDelete?: () => void }) {
+
+
     const fileName = p.file.filePath.split("/").pop() || "";
     const directoryPath = p.file.filePath.substring(0, p.file.filePath.lastIndexOf("/"));
+
+    const handleDelete = async () => {
+        const result = await deleteFile({ pb, id: p.file.id });
+        if (result.success) {
+
+            p.onDelete?.();
+        } else {
+
+        }
+    };
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -32,6 +47,14 @@ export function FileDetails(p: { file: TFileRecord }) {
                         <div className="flex text-center text-xl">{fileName}</div>
                         <div className="mt-2 flex gap-2">
                             <Button className="flex-1">Download</Button>
+                            <Button
+                                variant="destructive"
+                                className="flex-1"
+                                onClick={handleDelete}
+                            >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                            </Button>
                         </div>
                     </CardTitle>
                 </CardHeader>

@@ -134,6 +134,15 @@ export const getFile = async (p: { pb: PocketBase; id: string }) => {
   }
 };
 
+export const deleteFile = async (p: { pb: PocketBase; id: string }) => {
+  try {
+    await p.pb.collection("files").delete(p.id);
+    return { success: true } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
+
 // export const upsertFile = async (p: { pb: PocketBase; data: TFile }) => {
 //   try {
 //     const getResp = await p.pb.collection("files").getOne(p.data.id);

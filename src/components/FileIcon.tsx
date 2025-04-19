@@ -10,7 +10,7 @@ import {
   Presentation,
 } from "lucide-react";
 
-export function FileIcon({ fileName }: { fileName: string }) {
+export function FileIcon({ fileName, ...p }: { fileName: string; size?: number }) {
   const extension = fileName.split(".").pop()?.toLowerCase();
 
   const FileComp = !extension
@@ -76,5 +76,5 @@ export function FileIcon({ fileName }: { fileName: string }) {
         return File;
       })();
 
-  return <FileComp className="h-16 w-12" />;
+  return <FileComp size={p.size ? p.size : 40} />;
 }

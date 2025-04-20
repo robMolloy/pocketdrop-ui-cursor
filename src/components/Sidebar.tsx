@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { pb } from "@/config/pocketbaseConfig";
 import { logout } from "@/modules/auth/dbAuthUtils";
+import { useFilesStore } from "@/modules/files/filesStore";
 import { Home, LogOut, Settings, Star, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
-import { FileTree } from "./FileTree";
+import { DirectoryTree } from "./FileTree";
 
 const SidebarButtonWrapper = (p: { children: ReactNode; href?: string }) =>
   p.href ? <Link href={p.href}>{p.children}</Link> : p.children;
@@ -33,6 +34,7 @@ const SidebarButton = (p: {
 
 export function Sidebar() {
   const router = useRouter();
+  const filesStore = useFilesStore();
 
   return (
     <div className={"flex h-full flex-col"}>
@@ -44,7 +46,7 @@ export function Sidebar() {
           <SidebarButton href="/starred" Icon={Star} isHighlighted={router.pathname === "/starred"}>
             Starred
           </SidebarButton>
-          <FileTree />
+          <DirectoryTree data={filesStore.data} />
         </div>
       </div>
 

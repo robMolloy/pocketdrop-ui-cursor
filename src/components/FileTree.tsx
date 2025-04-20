@@ -2,50 +2,66 @@ import { ChevronDown, ChevronRight, Folder } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-interface DirectoryNode {
+type TFile = {
+  collectionId: string;
+  collectionName: string;
+  id: string;
+  file: string;
+  filePath: string;
+  created: string;
+  updated: string;
+};
+
+type DirectoryNode = {
   name: string;
   path: string;
   children?: DirectoryNode[];
-}
+};
 
-// Sample directory structure - replace with your actual data
-const directoryStructure: DirectoryNode[] = [
-  {
-    name: "src",
-    path: "/browse/src",
-    children: [
-      {
-        name: "components",
-        path: "/browse/src/components",
-        children: [
-          {
-            name: "ui",
-            path: "/browse/src/components/ui",
-            children: [
-              {
-                name: "button",
-                path: "/browse/src/components/ui/button",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "pages",
-        path: "/browse/src/pages",
-      },
-      {
-        name: "styles",
-        path: "/browse/src/styles",
-      },
-    ],
-  },
-  {
-    name: "public",
-    path: "/browse/public",
-    children: [], // Empty array to indicate it's a directory
-  },
-];
+type DirectoryMap = {
+  [key: string]: {
+    name: string;
+    path: string;
+    children?: DirectoryMap;
+  };
+};
+
+const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
+  const root: DirectoryMap = {};
+
+  p.data.forEach((file) => {
+    const pathParts = file.filePath.split("/").filter(Boolean);
+    let currentLevel = root;
+
+    pathParts.forEach((part, index) => {
+      const isLastPart = index === pathParts.length - 1;
+      const path = "/" + pathParts.slice(0, index + 1).join("/");
+
+      if (!currentLevel[part]) {
+        currentLevel[part] = {
+          name: part,
+          path: `/browse${path}`,
+          children: isLastPart ? undefined : {},
+        };
+      }
+
+      if (!isLastPart && currentLevel[part].children) {
+        currentLevel = currentLevel[part].children as DirectoryMap;
+      }
+    });
+  });
+
+  // Convert the nested object structure to array structure
+  const convertToArray = (node: DirectoryMap): DirectoryNode[] => {
+    return Object.values(node).map((item) => ({
+      name: item.name,
+      path: item.path,
+      children: item.children ? convertToArray(item.children) : undefined,
+    }));
+  };
+
+  return convertToArray(root);
+};
 
 function DirectoryItem({
   node,
@@ -55,6 +71,11 @@ function DirectoryItem({
   initIsOpen?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(initIsOpen);
+
+
+  const isDir = node.path
+
+  console.log(isDir)
 
   return (
     <div className="w-full">
@@ -74,6 +95,7 @@ function DirectoryItem({
         </div>
 
         {/* Directory content */}
+
         <Link href={node.path} className="flex flex-1 items-center">
           <Folder className="mr-2 h-4 w-4" />
           <span className="truncate text-sm">{node.name}</span>
@@ -92,7 +114,9 @@ function DirectoryItem({
   );
 }
 
-export function FileTree() {
+export function DirectoryTree({ data }: { data: TFile[] }) {
+  const directoryStructure = convertFilesToDirectoryTree({ data });
+
   return (
     <div className="flex flex-col">
       {directoryStructure.map((node) => (

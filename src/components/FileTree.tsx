@@ -15,6 +15,7 @@ type TFile = {
 type DirectoryNode = {
   name: string;
   path: string;
+  isDirectory: boolean;
   children?: DirectoryNode[];
 };
 
@@ -22,6 +23,7 @@ type DirectoryMap = {
   [key: string]: {
     name: string;
     path: string;
+    isDirectory: boolean;
     children?: DirectoryMap;
   };
 };
@@ -41,7 +43,8 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
         currentLevel[part] = {
           name: part,
           path: `/browse${path}`,
-          children: isLastPart ? undefined : {},
+          isDirectory: !isLastPart,
+          children: !isLastPart ? {} : undefined,
         };
       }
 
@@ -53,11 +56,14 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
 
   // Convert the nested object structure to array structure
   const convertToArray = (node: DirectoryMap): DirectoryNode[] => {
-    return Object.values(node).map((item) => ({
-      name: item.name,
-      path: item.path,
-      children: item.children ? convertToArray(item.children) : undefined,
-    }));
+    return Object.values(node)
+      .filter(item => item.isDirectory) // Only include directories
+      .map((item) => ({
+        name: item.name,
+        path: item.path,
+        isDirectory: item.isDirectory,
+        children: item.children ? convertToArray(item.children) : undefined,
+      }));
   };
 
   return convertToArray(root);
@@ -71,11 +77,6 @@ function DirectoryItem({
   initIsOpen?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(initIsOpen);
-
-
-  const isDir = node.path
-
-  console.log(isDir)
 
   return (
     <div className="w-full">
@@ -95,7 +96,6 @@ function DirectoryItem({
         </div>
 
         {/* Directory content */}
-
         <Link href={node.path} className="flex flex-1 items-center">
           <Folder className="mr-2 h-4 w-4" />
           <span className="truncate text-sm">{node.name}</span>
@@ -103,7 +103,7 @@ function DirectoryItem({
       </div>
 
       {/* Children section with proper indentation */}
-      {node.children && (
+      {node.children && node.children.length > 0 && (
         <div className={`pl-4 ${isOpen ? "" : "hidden"}`}>
           {node.children.map((child) => (
             <DirectoryItem key={child.path} node={child} />

@@ -4,17 +4,38 @@ import { TFileRecord, deleteFile, downloadFile, getFile } from "@/modules/files/
 import { Calendar, FileText, Folder, Hash, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { pb } from "@/config/pocketbaseConfig";
+import { useEffect, useState } from "react";
+
+const DetailsLine = (p: { Icon: typeof Hash; label: string; value: string }) => {
+  return (
+    <div className="flex items-center gap-2 text-sm">
+      <p.Icon className="h-4 w-4 text-muted-foreground" />
+      <span className="text-muted-foreground">{p.label}:</span>
+      <span className="font-mono">{p.value}</span>
+    </div>
+  );
+};
 
 export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
   const fileName = p.file.filePath.split("/").pop() || "";
   const directoryPath = p.file.filePath.substring(0, p.file.filePath.lastIndexOf("/"));
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchThumbnail = async () => {
+      const resp = await getFile({ pb, id: p.file.id, isThumb: true });
+      if (resp.success) {
+        const url = URL.createObjectURL(resp.data.file);
+        setThumbnailUrl(url);
+        return () => URL.revokeObjectURL(url);
+      }
+    };
+    fetchThumbnail();
+  }, [p.file.id]);
 
   const handleDelete = async () => {
     const result = await deleteFile({ pb, id: p.file.id });
-    if (result.success) {
-      p.onDelete();
-    } else {
-    }
+    if (result.success) p.onDelete();
   };
 
   const formatDate = (dateString: string) => {
@@ -22,29 +43,27 @@ export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
     return date.toLocaleString();
   };
 
-  const DetailsLine = (p: { Icon: typeof Hash; label: string; value: string }) => {
-    return (
-      <div className="flex items-center gap-2 text-sm">
-        <p.Icon className="h-4 w-4 text-muted-foreground" />
-        <span className="text-muted-foreground">{p.label}:</span>
-        <span className="font-mono">{p.value}</span>
-      </div>
-    );
-  };
-
   return (
     <>
       <Card>
         <CardHeader className="p-4">
           <CardTitle className="flex flex-col items-center gap-4 text-xl">
-            <FileIcon fileName={fileName} size={120} />
+            {thumbnailUrl ? (
+              <img
+                src={thumbnailUrl}
+                alt={fileName}
+                className="h-[120px] w-[120px] object-contain"
+              />
+            ) : (
+              <FileIcon fileName={fileName} size={120} />
+            )}
             <div className="flex text-center text-xl">{fileName}</div>
 
             <div className="mt-2 flex gap-2">
               <Button
                 className="flex-1"
                 onClick={async () => {
-                  const resp = await getFile({ pb, id: p.file.id });
+                  const resp = await getFile({ pb, id: p.file.id, isThumb: false });
                   if (resp.success) downloadFile({ data: resp.data });
                 }}
               >

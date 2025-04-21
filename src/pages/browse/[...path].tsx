@@ -16,6 +16,19 @@ export default function BrowsePage() {
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
 
+  // Get all unique directories in the current path
+  const directories = new Set<string>();
+  filesStore.data.forEach((file) => {
+    const filePath = file.filePath;
+    if (filePath.startsWith(fullPath + "/")) {
+      const remainingPath = filePath.slice(fullPath.length + 1);
+      const nextSlashIndex = remainingPath.indexOf("/");
+      if (nextSlashIndex > 0) {
+        directories.add(remainingPath.slice(0, nextSlashIndex));
+      }
+    }
+  });
+
   // Filter files for current path
   const currentPathFiles = filesStore.data.filter((file) => {
     const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
@@ -36,9 +49,23 @@ export default function BrowsePage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        {/* Show directories first */}
+        {Array.from(directories).map((dirName) => (
+          <div
+            key={dirName}
+            onClick={() => {
+              router.push(`/browse${fullPath}/${dirName}`);
+            }}
+            className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
+          >
+            <Folder className="mb-2 h-12 w-12" />
+            <span className="break-all text-center text-sm">{dirName}</span>
+          </div>
+        ))}
+
+        {/* Then show files */}
         {currentPathFiles.map((file) => {
           const fileName = file.filePath.split("/").pop() || "";
-          const isDirectory = false; // TODO: Implement directory detection
 
           return (
             <div
@@ -52,11 +79,7 @@ export default function BrowsePage() {
               }}
               className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
             >
-              {isDirectory ? (
-                <Folder className="mb-2 h-12 w-12" />
-              ) : (
-                <FileIcon fileName={fileName} />
-              )}
+              <FileIcon fileName={fileName} />
               <span className="break-all text-center text-sm">{fileName}</span>
             </div>
           );

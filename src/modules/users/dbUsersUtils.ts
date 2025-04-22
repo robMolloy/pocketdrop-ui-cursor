@@ -1,5 +1,4 @@
 import PocketBase, { RecordModel, RecordSubscription } from "pocketbase";
-import { TUser } from "./usersStore";
 import { z } from "zod";
 
 export const userSchema = z.object({
@@ -8,17 +7,17 @@ export const userSchema = z.object({
   id: z.string(),
   email: z.string(),
   name: z.string(),
-  status: z.union([z.literal("undefined"), z.literal("approved"), z.literal("denied")]),
+  status: z.union([z.literal("pending"), z.literal("approved"), z.literal("denied")]),
   created: z.string(),
   updated: z.string(),
 });
+export type TUser = z.infer<typeof userSchema>;
 
 export const listUsers = async (p: { pb: PocketBase }) => {
   try {
     const initData = await p.pb.collection("users").getFullList({
       sort: "-created",
     });
-    console.log(`dbUsersUtils.ts:${/*LL*/ 21}`, { initData });
 
     const data = initData
       .map((x) => userSchema.safeParse(x))

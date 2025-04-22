@@ -24,15 +24,8 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     const isLoggedIn = !!authDataStore.data?.token;
     if (isLoggedIn) {
-      console.log(`_app.tsx:${/*LL*/ 27}`, "loggedIn");
       smartSubscribeToFiles({ pb: pb, onChange: (x) => filesStore.setData(x) });
-      smartSubscribeToUsers({
-        pb: pb,
-        onChange: (x) => {
-          console.log(`_app.tsx:${/*LL*/ 32}`, { x });
-          usersStore.setData(x);
-        },
-      });
+      smartSubscribeToUsers({ pb: pb, onChange: (x) => usersStore.setData(x) });
     }
 
     if (!isLoggedIn) {

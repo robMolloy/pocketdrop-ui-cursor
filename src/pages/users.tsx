@@ -14,16 +14,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateUserStatus } from "@/modules/users/dbUsersUtils";
+import { TUser, updateUserStatus } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
 
 const UsersPage = () => {
   const usersStore = useUsersStore();
 
-  const handleStatusChange = async (
-    userId: string,
-    newStatus: "undefined" | "approved" | "denied",
-  ) => {
+  const handleStatusChange = async (userId: string, newStatus: TUser["status"]) => {
     try {
       await updateUserStatus({ pb, id: userId, status: newStatus });
     } catch (error) {
@@ -50,7 +47,7 @@ const UsersPage = () => {
               <TableCell>
                 <Select
                   value={user.status}
-                  onValueChange={(value: "undefined" | "approved" | "denied") =>
+                  onValueChange={(value: "pending" | "approved" | "denied") =>
                     handleStatusChange(user.id, value)
                   }
                 >
@@ -58,7 +55,7 @@ const UsersPage = () => {
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="undefined">Undefined</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="approved">Approved</SelectItem>
                     <SelectItem value="denied">Denied</SelectItem>
                   </SelectContent>

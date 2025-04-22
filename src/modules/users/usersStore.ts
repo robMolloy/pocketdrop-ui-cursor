@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import { z } from "zod";
-import { userSchema } from "./dbUsersUtils";
-
-export type TUser = z.infer<typeof userSchema>;
+import { TUser } from "./dbUsersUtils";
 
 type TState = TUser[];
 

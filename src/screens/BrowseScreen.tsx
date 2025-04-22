@@ -12,6 +12,10 @@ import { Folder, Plus } from "lucide-react";
 import { useRouter } from "next/router";
 
 export const BrowseScreen = (p: { browsePath: string }) => {
+  const browsePathPrefix = p.browsePath.startsWith("/") ? "" : "/";
+  const browsePathSuffix = p.browsePath.endsWith("/") ? "" : "/";
+  const browsePath = `${browsePathPrefix}${p.browsePath}${browsePathSuffix}`;
+
   const router = useRouter();
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
@@ -23,8 +27,8 @@ export const BrowseScreen = (p: { browsePath: string }) => {
 
   files?.forEach((file) => {
     const filePath = file.filePath;
-    if (filePath.startsWith(p.browsePath + "/")) {
-      const remainingPath = filePath.slice(p.browsePath.length + 1);
+    if (filePath.startsWith(browsePath + "/")) {
+      const remainingPath = filePath.slice(browsePath.length + 1);
       const nextSlashIndex = remainingPath.indexOf("/");
       if (nextSlashIndex > 0) {
         directories.add(remainingPath.slice(0, nextSlashIndex));
@@ -32,13 +36,19 @@ export const BrowseScreen = (p: { browsePath: string }) => {
     }
   });
 
-  // Filter files for current path
+  const currentPathDirs = !filesStore.data
+    ? []
+    : filesStore.data
+        .filter((x) => x.filePath.startsWith(browsePath))
+        .filter((x) => x.filePath.endsWith("/"))
+        .filter((x) => x.filePath.split("/").length === browsePath.split("/").length + 1);
+
   const currentPathFiles = !files
     ? []
     : files
         .filter((file) => {
           const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
-          return fileDir === p.browsePath;
+          return fileDir === browsePath;
         })
         .filter((file) => file.file !== "");
 
@@ -47,7 +57,7 @@ export const BrowseScreen = (p: { browsePath: string }) => {
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
-          <span className="flex-1 text-lg">{p.browsePath}</span>
+          <span className="flex-1 text-lg">/{browsePath.slice(1, -1)}</span>
         </div>
         <div className="flex items-end gap-2">
           <Button
@@ -56,9 +66,9 @@ export const BrowseScreen = (p: { browsePath: string }) => {
               modalStore.setData(
                 <ModalContent
                   title="New directory"
-                  description={`Create a new directory at ${p.browsePath}`}
+                  description={`Create a new directory at ${browsePath}`}
                   content={
-                    <CreateDirectoryForm onSuccess={modalStore.close} currentPath={p.browsePath} />
+                    <CreateDirectoryForm onSuccess={modalStore.close} currentPath={browsePath} />
                   }
                 />,
               )
@@ -72,27 +82,25 @@ export const BrowseScreen = (p: { browsePath: string }) => {
       <br />
 
       <div>
-        <FileUploader currentPath={p.browsePath} onUploadComplete={() => {}} />
+        <FileUploader currentPath={browsePath} onUploadComplete={() => {}} />
       </div>
 
       <br />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {/* Show directories first */}
-        {Array.from(directories).map((dirName) => (
+        {currentPathDirs.map((x) => (
           <div
-            key={dirName}
-            onClick={() => {
-              router.push(`/browse${p.browsePath}/${dirName}`);
-            }}
+            key={x.filePath}
+            onClick={() => router.push(`/browse${x.filePath}`)}
             className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
           >
-            <Folder className="mb-2 h-12 w-12" />
-            <span className="break-all text-center text-sm">{dirName}</span>
+            <Folder className="mb-2" size={60} />
+            <span className="break-all text-center text-sm">
+              {x.filePath.split("/").splice(-2, 1).join("")}
+            </span>
           </div>
         ))}
 
-        {/* Then show files */}
         {currentPathFiles.map((file) => {
           const fileName = file.filePath.split("/").pop() || "";
 
@@ -102,12 +110,7 @@ export const BrowseScreen = (p: { browsePath: string }) => {
               onClick={async () => {
                 rightSidebarStore.setData(
                   <RightSidebarContent title="File Details">
-                    <FileDetails
-                      file={file}
-                      onDelete={() => {
-                        rightSidebarStore.close();
-                      }}
-                    />
+                    <FileDetails file={file} onDelete={() => rightSidebarStore.close()} />
                   </RightSidebarContent>,
                 );
               }}

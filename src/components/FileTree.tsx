@@ -43,7 +43,7 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }): DirectoryNode[] => {
       // Create node if it doesn't exist
       if (!currentLevel[name]) {
         currentLevel[name] = {
-          name,
+          name: isDirectory ? `/${name}` : part,
           path: pathParts.slice(0, pathParts.indexOf(part) + 1).join(""),
           isDirectory,
           children: isDirectory ? [] : undefined,
@@ -77,6 +77,7 @@ function DirectoryItem({
   node: DirectoryNode;
   initIsOpen?: boolean;
 }) {
+  console.log(`FileTree.tsx:${/*LL*/ 80}`, { node });
   const [isOpen, setIsOpen] = useState(initIsOpen);
 
   if (!node.isDirectory) return <></>;

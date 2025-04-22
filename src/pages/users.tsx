@@ -1,4 +1,12 @@
-import { pb } from "@/config/pocketbaseConfig";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -14,48 +22,73 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { pb } from "@/config/pocketbaseConfig";
 import { TUser, updateUserStatus } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
+import { useModalStore } from "@/stores/modalStore";
+import { ReactNode } from "react";
 
+const Modal = () => {
+  const modalStore = useModalStore();
 
-
-const UserStateSelect = (p: {
-  user: TUser
-  onStatusChange: (x: TUser) => void
-}) => {
   return (
-    <Select
-      value={p.user.status}
-      onValueChange={(value: "pending" | "approved" | "denied") =>
-        p.onStatusChange({ ...p.user, status: value })
-      }
-    >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select status" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="pending">Pending</SelectItem>
-        <SelectItem value="approved">Approved</SelectItem>
-        <SelectItem value="denied">Denied</SelectItem>
-      </SelectContent>
-    </Select>
+    <Dialog open={!!modalStore.data} onOpenChange={() => modalStore.setData(null)}>
+      {modalStore.data}
+    </Dialog>
+  );
+};
+
+const ModalContent = (p: { title: string; description: string; buttons: ReactNode }) => {
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{p.title}</DialogTitle>
+        <DialogDescription>{p.description}</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>{p.buttons}</DialogFooter>
+    </DialogContent>
+  );
+};
+
+type TUserStatus = TUser["status"];
+
+const UserStateSelect = (p: { user: TUser; onStatusChange: (x: TUser) => void }) => {
+  return (
+    <>
+      <Select
+        value={p.user.status}
+        onValueChange={(status: TUserStatus) => p.onStatusChange({ ...p.user, status })}
+      >
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="pending">Pending</SelectItem>
+          <SelectItem value="approved">Approved</SelectItem>
+          <SelectItem value="denied">Denied</SelectItem>
+        </SelectContent>
+      </Select>
+    </>
   );
 };
 
 const UsersPage = () => {
   const usersStore = useUsersStore();
-
-  const handleStatusChange = async (user: TUser) => {
-    try {
-      await updateUserStatus({ pb, id: user.id, status: user.status });
-    } catch (error) {
-      console.error("Error updating user status:", error);
-    }
-  };
+  const modalStore = useModalStore();
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="mb-8 text-3xl font-bold">Users</h1>
+    <div>
+      <Button
+        onClick={() => {
+          modalStore.setData(
+            <ModalContent title="Test" description="test" buttons={<div>test</div>} />,
+          );
+        }}
+      >
+        click me
+      </Button>
+      <Modal />
+      <h1 className="m-0 text-3xl font-bold">Users</h1>
       <Table>
         <TableHeader>
           <TableRow>
@@ -72,7 +105,34 @@ const UsersPage = () => {
               <TableCell>
                 <UserStateSelect
                   user={user}
-                  onStatusChange={handleStatusChange}
+                  onStatusChange={async (user: TUser) => {
+                    modalStore.setData(
+                      <ModalContent
+                        title="Update status"
+                        description={`Are you sure you want to change the status of ${user.name} to ${user.status}?`}
+                        buttons={
+                          <>
+                            <Button variant="destructive" onClick={() => modalStore.close()}>
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={async () => {
+                                await updateUserStatus({ pb, id: user.id, status: user.status });
+                                modalStore.close();
+                              }}
+                            >
+                              Confirm
+                            </Button>
+                          </>
+                        }
+                      />,
+                    );
+                    // try {
+                    //   await updateUserStatus({ pb, id: user.id, status: user.status });
+                    // } catch (error) {
+                    //   console.error("Error updating user status:", error);
+                    // }
+                  }}
                 />
               </TableCell>
             </TableRow>

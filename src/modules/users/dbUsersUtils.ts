@@ -15,9 +15,8 @@ export type TUser = z.infer<typeof userSchema>;
 
 export const listUsers = async (p: { pb: PocketBase }) => {
   try {
-    const initData = await p.pb.collection("users").getFullList({
-      sort: "-created",
-    });
+    const initData = await p.pb.collection("users").getFullList();
+    console.log(`dbUsersUtils.ts:${/*LL*/ 21}`, { initData });
 
     const data = initData
       .map((x) => userSchema.safeParse(x))

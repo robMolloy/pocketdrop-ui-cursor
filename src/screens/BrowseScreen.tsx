@@ -21,16 +21,16 @@ export const BrowseScreen = (p: { browsePath: string }) => {
   const currentPathDirs = !filesStore.data
     ? []
     : filesStore.data
-        .filter((x) => x.filePath.startsWith(p.browsePath))
-        .filter((x) => x.filePath.endsWith("/"))
-        .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length + 1);
+      .filter((x) => x.filePath.startsWith(p.browsePath))
+      .filter((x) => x.filePath.endsWith("/"))
+      .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length + 1);
 
   const currentPathFiles = !filesStore.data
     ? []
     : filesStore.data
-        .filter((x) => x.filePath.startsWith(p.browsePath))
-        .filter((x) => !x.filePath.endsWith("/"))
-        .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length);
+      .filter((x) => x.filePath.startsWith(p.browsePath))
+      .filter((x) => !x.filePath.endsWith("/"))
+      .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length);
 
   // Create breadcrumb segments
   const pathSegments = p.browsePath
@@ -59,9 +59,8 @@ export const BrowseScreen = (p: { browsePath: string }) => {
                 <ChevronRight className="text-muted-foreground" size={15} />
                 <Link
                   href={`/browse${segment.path}`}
-                  className={`ml-1 text-lg ${
-                    segment.isLast ? "text-muted-foreground" : "hover:underline"
-                  }`}
+                  className={`ml-1 text-lg ${segment.isLast ? "text-muted-foreground" : "hover:underline"
+                    }`}
                 >
                   {segment.name}
                 </Link>
@@ -92,7 +91,7 @@ export const BrowseScreen = (p: { browsePath: string }) => {
       <br />
 
       <div>
-        <FileUploader currentPath={p.browsePath} onUploadComplete={() => {}} />
+        <FileUploader currentPath={p.browsePath} onUploadComplete={() => { }} />
       </div>
 
       <br />

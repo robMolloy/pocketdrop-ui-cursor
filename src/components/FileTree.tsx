@@ -35,16 +35,18 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }): DirectoryNode[] => {
   p.data.forEach((file) => {
     const pathParts = splitAfterSlash(file.filePath);
     let currentLevel = root;
+    let currentPath = '';
 
     // Process each part of the path
     pathParts.forEach((part) => {
       const isDirectory = part.endsWith("/");
       const name = isDirectory ? part.slice(0, -1) : part;
+      currentPath += part;
 
       if (!currentLevel[name]) {
         currentLevel[name] = {
           name: isDirectory ? `/${name}` : part,
-          path: pathParts.slice(0, pathParts.indexOf(part) + 1).join(""),
+          path: currentPath,
           isDirectory,
           children: isDirectory ? [] : undefined,
         };

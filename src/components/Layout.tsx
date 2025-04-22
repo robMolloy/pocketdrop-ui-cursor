@@ -1,7 +1,7 @@
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { Header } from "./Header";
 import { RightSidebar } from "./RightSidebar";
-import { Sidebar } from "./Sidebar";
+import { LeftSidebar } from "./LeftSidebar";
 import { Modal } from "./Modal";
 
 export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean }) {
@@ -13,7 +13,7 @@ export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean 
       <div className="flex flex-1">
         {p.showLeftSidebar && (
           <aside className="hidden h-[calc(100vh-3.5rem)] w-64 overflow-y-auto border-r bg-background md:block">
-            <Sidebar />
+            <LeftSidebar />
           </aside>
         )}
         <main className="h-[calc(100vh-3.5rem)] w-full overflow-y-auto">

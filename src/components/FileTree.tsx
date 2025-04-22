@@ -36,19 +36,19 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
     let currentLevel = root;
 
     pathParts.forEach((part, index) => {
-      const isLastPart = index === pathParts.length - 1;
+      const isDir = index === pathParts.length - 1; // all but last part is assumed to be a directory
       const path = "/" + pathParts.slice(0, index + 1).join("/");
 
       if (!currentLevel[part]) {
         currentLevel[part] = {
           name: part,
           path: `/browse${path}`,
-          isDirectory: !isLastPart,
-          children: !isLastPart ? {} : undefined,
+          isDirectory: !isDir,
+          children: isDir ? undefined : {},
         };
       }
 
-      if (!isLastPart && currentLevel[part].children) {
+      if (!isDir && currentLevel[part].children) {
         currentLevel = currentLevel[part].children as DirectoryMap;
       }
     });
@@ -57,7 +57,7 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
   // Convert the nested object structure to array structure
   const convertToArray = (node: DirectoryMap): DirectoryNode[] => {
     return Object.values(node)
-      .filter(item => item.isDirectory) // Only include directories
+      .filter((item) => item.isDirectory) // Only include directories
       .map((item) => ({
         name: item.name,
         path: item.path,

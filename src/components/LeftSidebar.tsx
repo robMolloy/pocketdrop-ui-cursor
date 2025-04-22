@@ -32,7 +32,7 @@ const SidebarButton = (p: {
   );
 };
 
-export function Sidebar() {
+export function LeftSidebar() {
   const router = useRouter();
   const filesStore = useFilesStore();
 

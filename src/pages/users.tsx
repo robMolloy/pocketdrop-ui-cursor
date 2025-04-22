@@ -17,12 +17,37 @@ import {
 import { TUser, updateUserStatus } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
 
+
+
+const UserStateSelect = (p: {
+  user: TUser
+  onStatusChange: (x: TUser) => void
+}) => {
+  return (
+    <Select
+      value={p.user.status}
+      onValueChange={(value: "pending" | "approved" | "denied") =>
+        p.onStatusChange({ ...p.user, status: value })
+      }
+    >
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="pending">Pending</SelectItem>
+        <SelectItem value="approved">Approved</SelectItem>
+        <SelectItem value="denied">Denied</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
 const UsersPage = () => {
   const usersStore = useUsersStore();
 
-  const handleStatusChange = async (userId: string, newStatus: TUser["status"]) => {
+  const handleStatusChange = async (user: TUser) => {
     try {
-      await updateUserStatus({ pb, id: userId, status: newStatus });
+      await updateUserStatus({ pb, id: user.id, status: user.status });
     } catch (error) {
       console.error("Error updating user status:", error);
     }
@@ -45,21 +70,10 @@ const UsersPage = () => {
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>
-                <Select
-                  value={user.status}
-                  onValueChange={(value: "pending" | "approved" | "denied") =>
-                    handleStatusChange(user.id, value)
-                  }
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="denied">Denied</SelectItem>
-                  </SelectContent>
-                </Select>
+                <UserStateSelect
+                  user={user}
+                  onStatusChange={handleStatusChange}
+                />
               </TableCell>
             </TableRow>
           ))}

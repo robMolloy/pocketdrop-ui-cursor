@@ -29,11 +29,18 @@ type DirectoryMap = {
 };
 
 const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
-  const root: DirectoryMap = {};
+  const root = {
+    "/": {
+      name: "/",
+      path: "/browse",
+      isDirectory: true,
+      children: {},
+    },
+  } as const satisfies DirectoryMap;
 
   p.data.forEach((file) => {
     const pathParts = file.filePath.split("/").filter(Boolean);
-    let currentLevel = root;
+    let currentLevel: DirectoryMap = root["/"].children as DirectoryMap;
 
     pathParts.forEach((part, index) => {
       const isDir = index === pathParts.length - 1; // all but last part is assumed to be a directory

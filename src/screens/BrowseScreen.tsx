@@ -14,27 +14,12 @@ import { useRouter } from "next/router";
 export const BrowseScreen = (p: { browsePath: string }) => {
   const browsePathPrefix = p.browsePath.startsWith("/") ? "" : "/";
   const browsePathSuffix = p.browsePath.endsWith("/") ? "" : "/";
-  const browsePath = `${browsePathPrefix}${p.browsePath}${browsePathSuffix}`;
+  const browsePath = `${browsePathPrefix}${p.browsePath}${browsePathSuffix}`; // browsePath always starts and ends with a slash
 
   const router = useRouter();
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
   const modalStore = useModalStore();
-
-  // Get all unique directories in the current path
-  const directories = new Set<string>();
-  const files = filesStore.data;
-
-  files?.forEach((file) => {
-    const filePath = file.filePath;
-    if (filePath.startsWith(browsePath + "/")) {
-      const remainingPath = filePath.slice(browsePath.length + 1);
-      const nextSlashIndex = remainingPath.indexOf("/");
-      if (nextSlashIndex > 0) {
-        directories.add(remainingPath.slice(0, nextSlashIndex));
-      }
-    }
-  });
 
   const currentPathDirs = !filesStore.data
     ? []
@@ -43,14 +28,12 @@ export const BrowseScreen = (p: { browsePath: string }) => {
         .filter((x) => x.filePath.endsWith("/"))
         .filter((x) => x.filePath.split("/").length === browsePath.split("/").length + 1);
 
-  const currentPathFiles = !files
+  const currentPathFiles = !filesStore.data
     ? []
-    : files
-        .filter((file) => {
-          const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
-          return fileDir === browsePath;
-        })
-        .filter((file) => file.file !== "");
+    : filesStore.data
+        .filter((x) => x.filePath.startsWith(browsePath))
+        .filter((x) => !x.filePath.endsWith("/"))
+        .filter((x) => x.filePath.split("/").length === browsePath.split("/").length);
 
   return (
     <>
@@ -88,39 +71,43 @@ export const BrowseScreen = (p: { browsePath: string }) => {
       <br />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {currentPathDirs.map((x) => (
-          <div
-            key={x.filePath}
-            onClick={() => router.push(`/browse${x.filePath}`)}
-            className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
-          >
-            <Folder className="mb-2" size={60} />
-            <span className="break-all text-center text-sm">
-              {x.filePath.split("/").splice(-2, 1).join("")}
-            </span>
-          </div>
-        ))}
-
-        {currentPathFiles.map((file) => {
-          const fileName = file.filePath.split("/").pop() || "";
-
-          return (
+        {currentPathDirs
+          .sort((a, b) => (a.filePath > b.filePath ? 1 : -1))
+          .map((x) => (
             <div
-              key={file.id}
-              onClick={async () => {
-                rightSidebarStore.setData(
-                  <RightSidebarContent title="File Details">
-                    <FileDetails file={file} onDelete={() => rightSidebarStore.close()} />
-                  </RightSidebarContent>,
-                );
-              }}
+              key={x.filePath}
+              onClick={() => router.push(`/browse${x.filePath}`)}
               className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
             >
-              <FileIcon fileName={fileName} />
-              <span className="break-all text-center text-sm">{fileName}</span>
+              <Folder className="mb-2" size={60} />
+              <span className="break-all text-center text-sm">
+                {x.filePath.split("/").splice(-2, 1).join("")}
+              </span>
             </div>
-          );
-        })}
+          ))}
+
+        {currentPathFiles
+          .sort((a, b) => (a.filePath > b.filePath ? 1 : -1))
+          .map((file) => {
+            const fileName = file.filePath.split("/").pop() || "";
+
+            return (
+              <div
+                key={file.id}
+                onClick={async () => {
+                  rightSidebarStore.setData(
+                    <RightSidebarContent title="File Details">
+                      <FileDetails file={file} onDelete={() => rightSidebarStore.close()} />
+                    </RightSidebarContent>,
+                  );
+                }}
+                className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
+              >
+                <FileIcon fileName={fileName} />
+                <span className="break-all text-center text-sm">{fileName}</span>
+              </div>
+            );
+          })}
       </div>
     </>
   );

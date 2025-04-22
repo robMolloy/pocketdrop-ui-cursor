@@ -80,15 +80,14 @@ function DirectoryItem({
   initIsOpen?: boolean;
   activePath?: string;
 }) {
-  const [isOpenManual, setIsOpenManual] = useState(initIsOpen);
-
   const isOnActivePath = !!activePath && activePath.startsWith(node.path);
+  const [isOpen, setIsOpen] = useState(initIsOpen || isOnActivePath);
   const isActive = activePath === node.path;
-  const isOpen = isOpenManual || isOnActivePath;
 
   useEffect(() => {
-    if (isOpen) setIsOpenManual(true)
-  }, [isOpen])
+    if (isOnActivePath) setIsOpen(true);
+  }, [isOnActivePath]);
+
   if (!node.isDirectory) return <></>;
 
   return (
@@ -100,11 +99,11 @@ function DirectoryItem({
           className="flex cursor-pointer items-center"
           onClick={(e) => {
             e.stopPropagation();
-            setIsOpenManual((x) => !x);
+            setIsOpen((x) => !x);
           }}
         >
           {(() => {
-            const Comp = isOpenManual || isOnActivePath ? ChevronDown : ChevronRight;
+            const Comp = isOpen ? ChevronDown : ChevronRight;
             return <Comp className="mr-1 h-4 w-4 flex-shrink-0" />;
           })()}
         </div>
@@ -112,7 +111,7 @@ function DirectoryItem({
         <Link
           href={`/browse${node.path}`}
           className={`flex flex-1 items-center`}
-          onClick={() => setIsOpenManual(true)}
+          onClick={() => setIsOpen(true)}
         >
           <Folder className="mr-2 h-4 w-4" />
           <span className="truncate text-sm">{node.name}</span>

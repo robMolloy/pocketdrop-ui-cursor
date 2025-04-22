@@ -38,9 +38,10 @@ export function FileUploader(p: { currentPath: string; onUploadComplete?: () => 
   return (
     <div
       {...getRootProps()}
-      className={`flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors ${
+      className={`flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors ${
         isDragActive ? "border-primary bg-primary/10" : "border-muted-foreground/25"
       } ${isUploading ? "opacity-50" : ""}`}
+      style={{ height: "136px" }}
     >
       <input {...getInputProps()} />
       <Upload className="mb-2 h-8 w-8 text-muted-foreground" />

@@ -79,7 +79,7 @@ function DirectoryItem({
 }) {
   const [isOpen, setIsOpen] = useState(initIsOpen);
 
-  if (!node.isDirectory) return <></>
+  if (!node.isDirectory) return <></>;
 
   return (
     <div className="w-full">
@@ -122,9 +122,13 @@ export function DirectoryTree({ data }: { data: TFile[] }) {
 
   return (
     <div className="flex flex-col">
-      {directoryStructure.map((node) => (
-        <DirectoryItem key={node.path} node={node} initIsOpen={true} />
-      ))}
+      {directoryStructure.length === 0 ? (
+        <DirectoryItem node={{ name: "/", path: "/", isDirectory: true }} initIsOpen={true} />
+      ) : (
+        directoryStructure.map((node) => (
+          <DirectoryItem key={node.path} node={node} initIsOpen={true} />
+        ))
+      )}
     </div>
   );
 }

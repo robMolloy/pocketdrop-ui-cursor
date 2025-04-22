@@ -1,5 +1,4 @@
-import { ModalContent } from "@/components/Modal";
-import { Button } from "@/components/ui/button";
+import { ConfirmationModalContent } from "@/components/Modal";
 import {
   Select,
   SelectContent,
@@ -21,6 +20,11 @@ import { useUsersStore } from "@/modules/users/usersStore";
 import { useModalStore } from "@/stores/modalStore";
 
 type TUserStatus = TUser["status"];
+const statusColorClassMap = {
+  pending: "bg-gray-400",
+  approved: "bg-green-500",
+  denied: "bg-destructive",
+} as const;
 
 const UserStateSelect = (p: { user: TUser; onStatusChange: (x: TUser) => void }) => {
   return (
@@ -29,7 +33,7 @@ const UserStateSelect = (p: { user: TUser; onStatusChange: (x: TUser) => void })
         value={p.user.status}
         onValueChange={(status: TUserStatus) => p.onStatusChange({ ...p.user, status })}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className={`w-[180px] ${statusColorClassMap[p.user.status]}`}>
           <SelectValue placeholder="Select status" />
         </SelectTrigger>
         <SelectContent>
@@ -67,24 +71,10 @@ const UsersPage = () => {
                   user={user}
                   onStatusChange={async (user: TUser) => {
                     modalStore.setData(
-                      <ModalContent
+                      <ConfirmationModalContent
                         title="Update status"
                         description={`Are you sure you want to change the status of ${user.name} to ${user.status}?`}
-                        buttons={
-                          <>
-                            <Button variant="destructive" onClick={() => modalStore.close()}>
-                              Cancel
-                            </Button>
-                            <Button
-                              onClick={async () => {
-                                await updateUserStatus({ pb, id: user.id, status: user.status });
-                                modalStore.close();
-                              }}
-                            >
-                              Confirm
-                            </Button>
-                          </>
-                        }
+                        onConfirm={() => updateUserStatus({ pb, id: user.id, status: user.status })}
                       />,
                     );
                   }}

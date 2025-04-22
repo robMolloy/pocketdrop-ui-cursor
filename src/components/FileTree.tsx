@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronRight, Folder } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type TFile = {
   collectionId: string;
@@ -80,39 +80,45 @@ function DirectoryItem({
   initIsOpen?: boolean;
   activePath?: string;
 }) {
-  const [isOpen, setIsOpen] = useState(initIsOpen);
+  const [isOpenManual, setIsOpenManual] = useState(initIsOpen);
 
-  if (!node.isDirectory) return <></>;
-  console.log({ activePath, np: node.path });
+  const isOnActivePath = !!activePath && activePath.startsWith(node.path);
   const isActive = activePath === node.path;
+  const isOpen = isOpenManual || isOnActivePath;
+
+  useEffect(() => {
+    if (isOpen) setIsOpenManual(true)
+  }, [isOpen])
+  if (!node.isDirectory) return <></>;
 
   return (
     <div className="w-full">
       <div
         className={`flex items-center rounded-md p-1 ${isActive ? "bg-white text-black" : "hover:bg-accent hover:text-accent-foreground"}`}
       >
-        {/* Arrow section */}
         <div
           className="flex cursor-pointer items-center"
           onClick={(e) => {
             e.stopPropagation();
-            setIsOpen((x) => !x);
+            setIsOpenManual((x) => !x);
           }}
         >
           {(() => {
-            const Comp = isOpen ? ChevronDown : ChevronRight;
+            const Comp = isOpenManual || isOnActivePath ? ChevronDown : ChevronRight;
             return <Comp className="mr-1 h-4 w-4 flex-shrink-0" />;
           })()}
         </div>
 
-        {/* Directory content */}
-        <Link href={`/browse${node.path}`} className={`flex flex-1 items-center`}>
+        <Link
+          href={`/browse${node.path}`}
+          className={`flex flex-1 items-center`}
+          onClick={() => setIsOpenManual(true)}
+        >
           <Folder className="mr-2 h-4 w-4" />
           <span className="truncate text-sm">{node.name}</span>
         </Link>
       </div>
 
-      {/* Children section with proper indentation */}
       {node.children && node.children.length > 0 && (
         <div className={`pl-4 ${isOpen ? "" : "hidden"}`}>
           {node.children.map((child) => (
@@ -142,7 +148,6 @@ export const useBrowsePath = () => {
 
 export function DirectoryTree({ data }: { data: TFile[] }) {
   const { browsePath } = useBrowsePath();
-  console.log(`FileTree.tsx:${/*LL*/ 144}`, { browsePath });
 
   const directoryStructure = convertFilesToDirectoryTree({ data });
 

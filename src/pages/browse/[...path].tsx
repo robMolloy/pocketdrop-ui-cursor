@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 
 export default function BrowsePage() {
   const router = useRouter();
-  const path = router.query.path as string;
-  return <BrowseScreen path={path} />;
+  const path = router.query.path;
+  const fullPath = path ? `/${Array.isArray(path) ? path.join("/") : path}` : "";
+  return <BrowseScreen path={fullPath} />;
 }

@@ -4,12 +4,7 @@ import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { pb } from "@/config/pocketbaseConfig";
 
-interface FileUploaderProps {
-  currentPath: string;
-  onUploadComplete?: () => void;
-}
-
-export function FileUploader({ currentPath, onUploadComplete }: FileUploaderProps) {
+export function FileUploader(p: { currentPath: string; onUploadComplete?: () => void }) {
   const [isUploading, setIsUploading] = useState(false);
 
   const onDrop = useCallback(
@@ -18,13 +13,13 @@ export function FileUploader({ currentPath, onUploadComplete }: FileUploaderProp
       try {
         for (const file of acceptedFiles) {
           const formData = new FormData();
-          const filePath = `${currentPath}/${file.name}`;
+          const filePath = `${p.currentPath}/${file.name}`;
           formData.append("file", file);
           formData.append("filePath", filePath);
 
           await pb.collection("files").create({ file, filePath });
         }
-        onUploadComplete?.();
+        p.onUploadComplete?.();
       } catch (e) {
         const error = e as { message: string };
         console.error("Error uploading file:", error.message);
@@ -32,7 +27,7 @@ export function FileUploader({ currentPath, onUploadComplete }: FileUploaderProp
         setIsUploading(false);
       }
     },
-    [currentPath, onUploadComplete],
+    [p.currentPath, p.onUploadComplete],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

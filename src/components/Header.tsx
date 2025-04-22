@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 
 export function Header() {
   const router = useRouter();
+  const fullPath = router.asPath;
   const isBrowsePage = router.pathname.startsWith("/browse");
 
   const rightSidebarStore = useRightSidebarStore();
@@ -29,7 +30,7 @@ export function Header() {
               onClick={() =>
                 rightSidebarStore.setData(
                   <RightSidebarContent title="Upload Files">
-                    <FileUploader currentPath={""} onUploadComplete={() => {}} />
+                    <FileUploader currentPath={fullPath.slice(7)} onUploadComplete={() => {}} />
                   </RightSidebarContent>,
                 )
               }

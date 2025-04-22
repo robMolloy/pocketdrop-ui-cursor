@@ -19,58 +19,52 @@ type DirectoryNode = {
   children?: DirectoryNode[];
 };
 
-type DirectoryMap = {
-  [key: string]: {
-    name: string;
-    path: string;
-    isDirectory: boolean;
-    children?: DirectoryMap;
-  };
+type DirectoryNodeMap = {
+  [key: string]: DirectoryNode;
 };
 
-const convertFilesToDirectoryTree = (p: { data: TFile[] }) => {
-  const root = {
-    "/": {
-      name: "/",
-      path: "/browse",
-      isDirectory: true,
-      children: {},
-    },
-  } as const satisfies DirectoryMap;
+const splitAfterSlash = (path: string): string[] => {
+  return path.match(/(^\/|[^\/]+\/|[^\/]+$)/g) || [];
+};
 
+const convertFilesToDirectoryTree = (p: { data: TFile[] }): DirectoryNode[] => {
+  const root: DirectoryNodeMap = {};
+
+  // Process each file
   p.data.forEach((file) => {
-    const pathParts = file.filePath.split("/").filter(Boolean);
-    let currentLevel: DirectoryMap = root["/"].children as DirectoryMap;
+    const pathParts = splitAfterSlash(file.filePath);
+    let currentLevel = root;
 
-    pathParts.forEach((part, index) => {
-      const isDir = index === pathParts.length - 1; // all but last part is assumed to be a directory
-      const path = "/" + pathParts.slice(0, index + 1).join("/");
+    // Process each part of the path
+    pathParts.forEach((part) => {
+      const isDirectory = part.endsWith("/");
+      const name = isDirectory ? part.slice(0, -1) : part;
 
-      if (!currentLevel[part]) {
-        currentLevel[part] = {
-          name: part,
-          path: `/browse${path}`,
-          isDirectory: !isDir,
-          children: isDir ? undefined : {},
+      // Create node if it doesn't exist
+      if (!currentLevel[name]) {
+        currentLevel[name] = {
+          name,
+          path: pathParts.slice(0, pathParts.indexOf(part) + 1).join(""),
+          isDirectory,
+          children: isDirectory ? [] : undefined,
         };
       }
 
-      if (!isDir && currentLevel[part].children) {
-        currentLevel = currentLevel[part].children as DirectoryMap;
+      // Move to next level if this is a directory
+      if (isDirectory) {
+        currentLevel = currentLevel[name].children as unknown as DirectoryNodeMap;
       }
     });
   });
 
-  // Convert the nested object structure to array structure
-  const convertToArray = (node: DirectoryMap): DirectoryNode[] => {
-    return Object.values(node)
-      .filter((item) => item.isDirectory) // Only include directories
-      .map((item) => ({
-        name: item.name,
-        path: item.path,
-        isDirectory: item.isDirectory,
-        children: item.children ? convertToArray(item.children) : undefined,
-      }));
+  // Convert the nested object structure to an array
+  const convertToArray = (node: DirectoryNodeMap): DirectoryNode[] => {
+    return Object.values(node).map((item) => ({
+      ...item,
+      children: item.children
+        ? convertToArray(item.children as unknown as DirectoryNodeMap)
+        : undefined,
+    }));
   };
 
   return convertToArray(root);
@@ -84,6 +78,8 @@ function DirectoryItem({
   initIsOpen?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(initIsOpen);
+
+  if (!node.isDirectory) return <></>
 
   return (
     <div className="w-full">
@@ -103,7 +99,7 @@ function DirectoryItem({
         </div>
 
         {/* Directory content */}
-        <Link href={node.path} className="flex flex-1 items-center">
+        <Link href={`/browse${node.path}`} className="flex flex-1 items-center">
           <Folder className="mr-2 h-4 w-4" />
           <span className="truncate text-sm">{node.name}</span>
         </Link>

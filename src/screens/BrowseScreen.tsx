@@ -9,8 +9,6 @@ import { useRouter } from "next/router";
 
 export const BrowseScreen = (p: { path: string }) => {
   const router = useRouter();
-  // Convert path array to string if it exists
-  const fullPath = p.path ? `/${Array.isArray(p.path) ? p.path.join("/") : p.path}` : "";
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
 
@@ -20,8 +18,8 @@ export const BrowseScreen = (p: { path: string }) => {
 
   files?.forEach((file) => {
     const filePath = file.filePath;
-    if (filePath.startsWith(fullPath + "/")) {
-      const remainingPath = filePath.slice(fullPath.length + 1);
+    if (filePath.startsWith(p.path + "/")) {
+      const remainingPath = filePath.slice(p.path.length + 1);
       const nextSlashIndex = remainingPath.indexOf("/");
       if (nextSlashIndex > 0) {
         directories.add(remainingPath.slice(0, nextSlashIndex));
@@ -32,22 +30,24 @@ export const BrowseScreen = (p: { path: string }) => {
   // Filter files for current path
   const currentPathFiles = !files
     ? []
-    : files.filter((file) => {
-        const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
-        return fileDir === fullPath;
-      });
+    : files
+        .filter((file) => {
+          const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
+          return fileDir === p.path;
+        })
+        .filter((file) => file.file !== "");
 
   return (
     <>
       <div className="mb-6">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
-          <p className="flex-1 text-lg">{fullPath}</p>
+          <p className="flex-1 text-lg">{p.path}</p>
         </div>
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
+        <FileUploader currentPath={p.path} onUploadComplete={() => {}} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -56,7 +56,7 @@ export const BrowseScreen = (p: { path: string }) => {
           <div
             key={dirName}
             onClick={() => {
-              router.push(`/browse${fullPath}/${dirName}`);
+              router.push(`/browse${p.path}/${dirName}`);
             }}
             className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
           >

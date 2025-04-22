@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronRight, Folder } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 type TFile = {
@@ -73,18 +74,23 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }): DirectoryNode[] => {
 function DirectoryItem({
   node,
   initIsOpen = false,
+  activePath,
 }: {
   node: DirectoryNode;
   initIsOpen?: boolean;
+  activePath?: string;
 }) {
-  console.log(`FileTree.tsx:${/*LL*/ 80}`, { node });
   const [isOpen, setIsOpen] = useState(initIsOpen);
 
   if (!node.isDirectory) return <></>;
+  console.log({ activePath, np: node.path });
+  const isActive = activePath === node.path;
 
   return (
     <div className="w-full">
-      <div className="flex items-center rounded-md p-1 hover:bg-accent hover:text-accent-foreground">
+      <div
+        className={`flex items-center rounded-md p-1 ${isActive ? "bg-white text-black" : "hover:bg-accent hover:text-accent-foreground"}`}
+      >
         {/* Arrow section */}
         <div
           className="flex cursor-pointer items-center"
@@ -100,7 +106,7 @@ function DirectoryItem({
         </div>
 
         {/* Directory content */}
-        <Link href={`/browse${node.path}`} className="flex flex-1 items-center">
+        <Link href={`/browse${node.path}`} className={`flex flex-1 items-center`}>
           <Folder className="mr-2 h-4 w-4" />
           <span className="truncate text-sm">{node.name}</span>
         </Link>
@@ -110,7 +116,7 @@ function DirectoryItem({
       {node.children && node.children.length > 0 && (
         <div className={`pl-4 ${isOpen ? "" : "hidden"}`}>
           {node.children.map((child) => (
-            <DirectoryItem key={child.path} node={child} />
+            <DirectoryItem key={child.path} node={child} activePath={activePath} />
           ))}
         </div>
       )}
@@ -118,16 +124,39 @@ function DirectoryItem({
   );
 }
 
+export const useBrowsePath = () => {
+  const router = useRouter();
+
+  const fullPath = router.asPath;
+  const initBrowsePath = fullPath.startsWith("/browse") ? fullPath.slice(7) : undefined;
+  if (initBrowsePath === undefined) return { browsePath: undefined };
+  if (initBrowsePath === "") return { browsePath: "/" };
+
+  const browsePathPrefix = initBrowsePath.startsWith("/") ? "" : "/";
+  const browsePathSuffix = initBrowsePath.endsWith("/") ? "" : "/";
+
+  // browsePath always starts and ends with a slash
+  const browsePath = `${browsePathPrefix}${initBrowsePath}${browsePathSuffix}`;
+  return { browsePath };
+};
+
 export function DirectoryTree({ data }: { data: TFile[] }) {
+  const { browsePath } = useBrowsePath();
+  console.log(`FileTree.tsx:${/*LL*/ 144}`, { browsePath });
+
   const directoryStructure = convertFilesToDirectoryTree({ data });
 
   return (
     <div className="flex flex-col">
       {directoryStructure.length === 0 ? (
-        <DirectoryItem node={{ name: "/", path: "/", isDirectory: true }} initIsOpen={true} />
+        <DirectoryItem
+          node={{ name: "/", path: "/", isDirectory: true }}
+          initIsOpen={true}
+          activePath={browsePath}
+        />
       ) : (
         directoryStructure.map((node) => (
-          <DirectoryItem key={node.path} node={node} initIsOpen={true} />
+          <DirectoryItem key={node.path} node={node} initIsOpen={true} activePath={browsePath} />
         ))
       )}
     </div>

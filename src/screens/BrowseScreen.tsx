@@ -12,10 +12,6 @@ import { Folder, Plus } from "lucide-react";
 import { useRouter } from "next/router";
 
 export const BrowseScreen = (p: { browsePath: string }) => {
-  const browsePathPrefix = p.browsePath.startsWith("/") ? "" : "/";
-  const browsePathSuffix = p.browsePath.endsWith("/") ? "" : "/";
-  const browsePath = `${browsePathPrefix}${p.browsePath}${browsePathSuffix}`; // browsePath always starts and ends with a slash
-
   const router = useRouter();
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
@@ -24,23 +20,23 @@ export const BrowseScreen = (p: { browsePath: string }) => {
   const currentPathDirs = !filesStore.data
     ? []
     : filesStore.data
-        .filter((x) => x.filePath.startsWith(browsePath))
+        .filter((x) => x.filePath.startsWith(p.browsePath))
         .filter((x) => x.filePath.endsWith("/"))
-        .filter((x) => x.filePath.split("/").length === browsePath.split("/").length + 1);
+        .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length + 1);
 
   const currentPathFiles = !filesStore.data
     ? []
     : filesStore.data
-        .filter((x) => x.filePath.startsWith(browsePath))
+        .filter((x) => x.filePath.startsWith(p.browsePath))
         .filter((x) => !x.filePath.endsWith("/"))
-        .filter((x) => x.filePath.split("/").length === browsePath.split("/").length);
+        .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length);
 
   return (
     <>
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
-          <span className="flex-1 text-lg">/{browsePath.slice(1, -1)}</span>
+          <span className="flex-1 text-lg">/{p.browsePath.slice(1, -1)}</span>
         </div>
         <div className="flex items-end gap-2">
           <Button
@@ -49,9 +45,9 @@ export const BrowseScreen = (p: { browsePath: string }) => {
               modalStore.setData(
                 <ModalContent
                   title="New directory"
-                  description={`Create a new directory at ${browsePath}`}
+                  description={`Create a new directory at ${p.browsePath}`}
                   content={
-                    <CreateDirectoryForm onSuccess={modalStore.close} currentPath={browsePath} />
+                    <CreateDirectoryForm onSuccess={modalStore.close} currentPath={p.browsePath} />
                   }
                 />,
               )
@@ -65,7 +61,7 @@ export const BrowseScreen = (p: { browsePath: string }) => {
       <br />
 
       <div>
-        <FileUploader currentPath={browsePath} onUploadComplete={() => {}} />
+        <FileUploader currentPath={p.browsePath} onUploadComplete={() => {}} />
       </div>
 
       <br />

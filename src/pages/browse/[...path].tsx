@@ -1,10 +1,8 @@
+import { useBrowsePath } from "@/components/FileTree";
 import { BrowseScreen } from "@/screens/BrowseScreen";
-import { useRouter } from "next/router";
 
 export default function BrowsePage() {
-  const router = useRouter();
-  const path = router.asPath;
-  const browsePath = path.slice(7) + "/";
+  const browsePath = useBrowsePath().browsePath as string;
 
   return <BrowseScreen browsePath={browsePath} />;
 }

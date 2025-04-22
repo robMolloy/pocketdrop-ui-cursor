@@ -2,6 +2,7 @@ import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { Header } from "./Header";
 import { RightSidebar } from "./RightSidebar";
 import { Sidebar } from "./Sidebar";
+import { Modal } from "./Modal";
 
 export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean }) {
   const rightSidebarStore = useRightSidebarStore();
@@ -23,6 +24,7 @@ export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean 
         isOpen={rightSidebarStore.data !== null}
         onClose={() => rightSidebarStore.setData(null)}
       />
+      <Modal />
     </div>
   );
 }

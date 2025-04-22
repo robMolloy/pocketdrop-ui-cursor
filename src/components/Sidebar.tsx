@@ -46,7 +46,7 @@ export function Sidebar() {
           <SidebarButton href="/starred" Icon={Star} isHighlighted={router.pathname === "/starred"}>
             Starred
           </SidebarButton>
-          <DirectoryTree data={filesStore.data} />
+          {filesStore.data !== undefined && <DirectoryTree data={filesStore.data} />}
         </div>
       </div>
 

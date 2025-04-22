@@ -18,7 +18,9 @@ export default function BrowsePage() {
 
   // Get all unique directories in the current path
   const directories = new Set<string>();
-  filesStore.data.forEach((file) => {
+  const files = filesStore.data;
+
+  files?.forEach((file) => {
     const filePath = file.filePath;
     if (filePath.startsWith(fullPath + "/")) {
       const remainingPath = filePath.slice(fullPath.length + 1);
@@ -30,10 +32,12 @@ export default function BrowsePage() {
   });
 
   // Filter files for current path
-  const currentPathFiles = filesStore.data.filter((file) => {
-    const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
-    return fileDir === fullPath;
-  });
+  const currentPathFiles = !files
+    ? []
+    : files.filter((file) => {
+        const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
+        return fileDir === fullPath;
+      });
 
   return (
     <>
@@ -45,7 +49,7 @@ export default function BrowsePage() {
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={fullPath} onUploadComplete={() => { }} />
+        <FileUploader currentPath={fullPath} onUploadComplete={() => {}} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -73,7 +77,12 @@ export default function BrowsePage() {
               onClick={async () => {
                 rightSidebarStore.setData(
                   <RightSidebarContent title="File Details">
-                    <FileDetails file={file} onDelete={() => { rightSidebarStore.close() }} />
+                    <FileDetails
+                      file={file}
+                      onDelete={() => {
+                        rightSidebarStore.close();
+                      }}
+                    />
                   </RightSidebarContent>,
                 );
               }}

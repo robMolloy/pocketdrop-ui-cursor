@@ -1,6 +1,6 @@
 import { CreateDirectoryForm } from "@/components/CreateDirectoryForm";
 import { FileDetails } from "@/components/FileDetails";
-import { FileIcon } from "@/components/FileIcon";
+import { FileIcon, getFileExtension } from "@/components/FileIcon";
 import { ModalContent } from "@/components/Modal";
 import { RightSidebarContent } from "@/components/RightSidebar";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,8 @@ import { FileUploader } from "@/modules/files/FileUploader";
 import { useFilesStore } from "@/modules/files/filesStore";
 import { useModalStore } from "@/stores/modalStore";
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
-import { Folder, Plus } from "lucide-react";
+import { ChevronRight, Folder, Plus } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 export const BrowseScreen = (p: { browsePath: string }) => {
@@ -31,12 +32,42 @@ export const BrowseScreen = (p: { browsePath: string }) => {
         .filter((x) => !x.filePath.endsWith("/"))
         .filter((x) => x.filePath.split("/").length === p.browsePath.split("/").length);
 
+  // Create breadcrumb segments
+  const pathSegments = p.browsePath
+    .split("/")
+    .filter(Boolean)
+    .map((segment, index, array) => {
+      const path = "/" + array.slice(0, index + 1).join("/") + "/";
+      return {
+        name: segment,
+        path,
+        isLast: index === array.length - 1,
+      };
+    });
+
   return (
     <>
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
-          <span className="flex-1 text-lg">/{p.browsePath.slice(1, -1)}</span>
+          <div className="flex items-center gap-1">
+            <Link href="/browse/" className="text-lg text-muted-foreground hover:text-foreground">
+              /
+            </Link>
+            {pathSegments.map((segment) => (
+              <div key={segment.path} className="flex items-center">
+                <ChevronRight className="text-muted-foreground" size={15} />
+                <Link
+                  href={`/browse${segment.path}`}
+                  className={`ml-1 text-lg ${
+                    segment.isLast ? "text-muted-foreground" : "hover:underline"
+                  }`}
+                >
+                  {segment.name}
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="flex items-end gap-2">
           <Button
@@ -99,7 +130,7 @@ export const BrowseScreen = (p: { browsePath: string }) => {
                 }}
                 className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
               >
-                <FileIcon fileName={fileName} />
+                <FileIcon extension={getFileExtension(file)} />
                 <span className="break-all text-center text-sm">{fileName}</span>
               </div>
             );

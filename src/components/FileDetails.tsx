@@ -1,10 +1,10 @@
-import { FileIcon } from "@/components/FileIcon";
+import { FileIcon, getFileExtension, imageExtensions } from "@/components/FileIcon";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { TFileRecord, deleteFile, downloadFile, getFile } from "@/modules/files/dbFilesUtils";
-import { Calendar, FileText, Folder, Hash, Trash2 } from "lucide-react";
-import { Button } from "./ui/button";
 import { pb } from "@/config/pocketbaseConfig";
+import { TFileRecord, deleteFile, downloadFile, getFile } from "@/modules/files/dbFilesUtils";
+import { Calendar, Download, FileText, Folder, Hash, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 const DetailsLine = (p: { Icon: typeof Hash; label: string; value: string }) => {
   return (
@@ -22,15 +22,17 @@ export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchThumbnail = async () => {
+    const extension = getFileExtension(p.file);
+    if (!imageExtensions.includes(extension ?? "")) return;
+
+    (async () => {
       const resp = await getFile({ pb, id: p.file.id, isThumb: true });
       if (resp.success) {
         const url = URL.createObjectURL(resp.data.file);
         setThumbnailUrl(url);
         return () => URL.revokeObjectURL(url);
       }
-    };
-    fetchThumbnail();
+    })();
   }, [p.file.id]);
 
   const handleDelete = async () => {
@@ -55,7 +57,7 @@ export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
                 className="h-[120px] w-[120px] object-contain"
               />
             ) : (
-              <FileIcon fileName={fileName} size={120} />
+              <FileIcon extension={getFileExtension(p.file)} size={120} />
             )}
             <div className="flex text-center text-xl">{fileName}</div>
 
@@ -67,6 +69,7 @@ export function FileDetails(p: { file: TFileRecord; onDelete: () => void }) {
                   if (resp.success) downloadFile({ data: resp.data });
                 }}
               >
+                <Download size={40} />
                 Download
               </Button>
               <Button variant="destructive" className="flex flex-1 gap-2" onClick={handleDelete}>

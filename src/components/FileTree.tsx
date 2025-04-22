@@ -41,7 +41,6 @@ const convertFilesToDirectoryTree = (p: { data: TFile[] }): DirectoryNode[] => {
       const isDirectory = part.endsWith("/");
       const name = isDirectory ? part.slice(0, -1) : part;
 
-      // Create node if it doesn't exist
       if (!currentLevel[name]) {
         currentLevel[name] = {
           name: isDirectory ? `/${name}` : part,
@@ -148,7 +147,7 @@ export const useBrowsePath = () => {
 export function DirectoryTree({ data }: { data: TFile[] }) {
   const { browsePath } = useBrowsePath();
 
-  const directoryStructure = convertFilesToDirectoryTree({ data });
+  const directoryStructure = convertFilesToDirectoryTree({ data: data.sort((a, b) => a > b ? 1 : -1) });
 
   return (
     <div className="flex flex-col">

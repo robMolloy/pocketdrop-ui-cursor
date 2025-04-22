@@ -1,3 +1,4 @@
+import { TFile, TFileRecord } from "@/modules/files/dbFilesUtils";
 import {
   File,
   FileArchive,
@@ -10,69 +11,80 @@ import {
   Presentation,
 } from "lucide-react";
 
-export function FileIcon({ fileName, ...p }: { fileName: string; size?: number }) {
-  const extension = fileName.split(".").pop()?.toLowerCase();
+export const getFileExtension = (file: TFileRecord | TFile) => {
+  return file.filePath.split(".").pop()?.toLowerCase() ?? "";
+};
 
-  const FileComp = !extension
+export const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "tiff", "ico"];
+export const textExtensions = [
+  "txt",
+  "md",
+  "json",
+  "csv",
+  "rtf",
+  "log",
+  "doc",
+  "docx",
+  "pdf",
+  "odt",
+  "pages",
+];
+const codeExtensions = [
+  "js",
+  "jsx",
+  "ts",
+  "tsx",
+  "html",
+  "css",
+  "py",
+  "java",
+  "cpp",
+  "c",
+  "h",
+  "hpp",
+  "php",
+  "rb",
+  "swift",
+  "kt",
+  "go",
+  "rs",
+  "sql",
+  "sh",
+  "bash",
+  "yml",
+  "yaml",
+  "xml",
+];
+const fileExtensions = ["zip", "rar", "7z", "tar", "gz", "bz2", "xz", "iso", "dmg"];
+const audioExtensions = ["mp3", "wav", "ogg", "m4a", "flac", "aac", "wma", "mid", "midi"];
+const videoExtensions = [
+  "mp4",
+  "mov",
+  "avi",
+  "webm",
+  "mkv",
+  "flv",
+  "wmv",
+  "m4v",
+  "mpeg",
+  "mpg",
+  "3gp",
+];
+const spreadsheetExtensions = ["xls", "xlsx", "ods", "numbers"];
+const presentationExtensions = ["ppt", "pptx", "odp", "key"];
+
+export function FileIcon(p: { extension: string; size?: number }) {
+  const FileComp = p.extension
     ? File
     : (() => {
-        if (["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "tiff", "ico"].includes(extension))
-          return Image;
-
-        if (
-          ["txt", "md", "json", "csv", "rtf", "log", "doc", "docx", "pdf", "odt", "pages"].includes(
-            extension,
-          )
-        )
-          return FileText;
-
-        if (
-          [
-            "js",
-            "jsx",
-            "ts",
-            "tsx",
-            "html",
-            "css",
-            "py",
-            "java",
-            "cpp",
-            "c",
-            "h",
-            "hpp",
-            "php",
-            "rb",
-            "swift",
-            "kt",
-            "go",
-            "rs",
-            "sql",
-            "sh",
-            "bash",
-            "yml",
-            "yaml",
-            "xml",
-          ].includes(extension)
-        )
-          return FileCode;
-
-        if (["zip", "rar", "7z", "tar", "gz", "bz2", "xz", "iso", "dmg"].includes(extension))
-          return FileArchive;
-
-        if (["mp3", "wav", "ogg", "m4a", "flac", "aac", "wma", "mid", "midi"].includes(extension))
-          return FileAudio;
-
-        if (
-          ["mp4", "mov", "avi", "webm", "mkv", "flv", "wmv", "m4v", "mpeg", "mpg", "3gp"].includes(
-            extension,
-          )
-        )
-          return FileVideo;
-
-        if (["xls", "xlsx", "ods", "numbers"].includes(extension)) return FileSpreadsheet;
-
-        if (["ppt", "pptx", "odp", "key"].includes(extension)) return Presentation;
-
+        if (imageExtensions.includes(p.extension)) return Image;
+        if (textExtensions.includes(p.extension)) return FileText;
+        if (codeExtensions.includes(p.extension)) return FileCode;
+        if (fileExtensions.includes(p.extension)) return FileArchive;
+        if (audioExtensions.includes(p.extension)) return FileAudio;
+        if (videoExtensions.includes(p.extension)) return FileVideo;
+        if (spreadsheetExtensions.includes(p.extension)) return FileSpreadsheet;
+        if (presentationExtensions.includes(p.extension)) return Presentation;
         return File;
       })();
 

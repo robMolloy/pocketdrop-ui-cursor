@@ -13,7 +13,7 @@ export function FileUploader(p: { currentPath: string; onUploadComplete?: () => 
       try {
         for (const file of acceptedFiles) {
           const formData = new FormData();
-          const filePath = `${p.currentPath}/${file.name}`;
+          const filePath = `${p.currentPath}${p.currentPath.slice(-1) === "/" ? "" : "/"}${file.name}`;
           formData.append("file", file);
           formData.append("filePath", filePath);
 

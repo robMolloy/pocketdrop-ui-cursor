@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogFooterButtons,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -21,14 +22,20 @@ export const Modal = () => {
   );
 };
 
-export const ModalContent = (p: { title: string; description: string; buttons: ReactNode }) => {
+export const ModalContent = (p: {
+  title: string;
+  description: string;
+  content?: ReactNode;
+  footer?: ReactNode;
+}) => {
   return (
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{p.title}</DialogTitle>
         <DialogDescription>{p.description}</DialogDescription>
       </DialogHeader>
-      <DialogFooter>{p.buttons}</DialogFooter>
+      {p.content}
+      {p.footer && <DialogFooter>{p.footer}</DialogFooter>}
     </DialogContent>
   );
 };
@@ -43,8 +50,8 @@ export const ConfirmationModalContent = (p: {
     <ModalContent
       title={p.title}
       description={p.description}
-      buttons={
-        <>
+      footer={
+        <DialogFooterButtons>
           <Button variant="destructive" onClick={() => modalStore.close()}>
             Cancel
           </Button>
@@ -56,7 +63,7 @@ export const ConfirmationModalContent = (p: {
           >
             Confirm
           </Button>
-        </>
+        </DialogFooterButtons>
       }
     />
   );

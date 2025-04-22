@@ -1,16 +1,21 @@
+import { CreateDirectoryForm } from "@/components/CreateDirectoryForm";
 import { FileDetails } from "@/components/FileDetails";
 import { FileIcon } from "@/components/FileIcon";
+import { ModalContent } from "@/components/Modal";
 import { RightSidebarContent } from "@/components/RightSidebar";
+import { Button } from "@/components/ui/button";
 import { FileUploader } from "@/modules/files/FileUploader";
 import { useFilesStore } from "@/modules/files/filesStore";
+import { useModalStore } from "@/stores/modalStore";
 import { useRightSidebarStore } from "@/stores/rightSidebarStore";
-import { Folder } from "lucide-react";
+import { Folder, Plus } from "lucide-react";
 import { useRouter } from "next/router";
 
 export const BrowseScreen = (p: { browsePath: string }) => {
   const router = useRouter();
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
+  const modalStore = useModalStore();
 
   // Get all unique directories in the current path
   const directories = new Set<string>();
@@ -39,16 +44,38 @@ export const BrowseScreen = (p: { browsePath: string }) => {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
-          <p className="flex-1 text-lg">{p.browsePath}</p>
+          <span className="flex-1 text-lg">{p.browsePath}</span>
+        </div>
+        <div className="flex items-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              modalStore.setData(
+                <ModalContent
+                  title="New directory"
+                  description={`Create a new directory at ${p.browsePath}`}
+                  content={
+                    <CreateDirectoryForm onSuccess={modalStore.close} currentPath={p.browsePath} />
+                  }
+                />,
+              )
+            }
+          >
+            <Plus /> New Directory
+          </Button>
         </div>
       </div>
 
-      <div className="mb-6">
+      <br />
+
+      <div>
         <FileUploader currentPath={p.browsePath} onUploadComplete={() => {}} />
       </div>
+
+      <br />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {/* Show directories first */}

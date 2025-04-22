@@ -73,7 +73,10 @@ export const smartSubscribeToFiles = async (p: {
   return { success: true, data: unsub } as const;
 };
 
-export const createFile = async (p: { pb: PocketBase; data: { file: File; filePath: string } }) => {
+export const createFile = async (p: {
+  pb: PocketBase;
+  data: { file?: File; filePath: string };
+}) => {
   try {
     const resp = await p.pb.collection("files").create(p.data);
     return { success: true, data: resp } as const;

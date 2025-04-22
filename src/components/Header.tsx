@@ -10,7 +10,6 @@ import { Button } from "./ui/button";
 export function Header() {
   const router = useRouter();
   const fullPath = router.asPath;
-  const isBrowsePage = router.pathname.startsWith("/browse");
 
   const rightSidebarStore = useRightSidebarStore();
 
@@ -22,7 +21,7 @@ export function Header() {
           <span className="font-bold">PocketDrop</span>
         </Link>
         <nav className="flex items-center space-x-2">
-          {isBrowsePage && (
+          {fullPath.startsWith("/browse") && (
             <Button
               variant="outline"
               size="sm"

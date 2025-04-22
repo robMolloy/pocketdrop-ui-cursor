@@ -7,7 +7,7 @@ import { useRightSidebarStore } from "@/stores/rightSidebarStore";
 import { Folder } from "lucide-react";
 import { useRouter } from "next/router";
 
-export const BrowseScreen = (p: { path: string }) => {
+export const BrowseScreen = (p: { browsePath: string }) => {
   const router = useRouter();
   const rightSidebarStore = useRightSidebarStore();
   const filesStore = useFilesStore();
@@ -18,8 +18,8 @@ export const BrowseScreen = (p: { path: string }) => {
 
   files?.forEach((file) => {
     const filePath = file.filePath;
-    if (filePath.startsWith(p.path + "/")) {
-      const remainingPath = filePath.slice(p.path.length + 1);
+    if (filePath.startsWith(p.browsePath + "/")) {
+      const remainingPath = filePath.slice(p.browsePath.length + 1);
       const nextSlashIndex = remainingPath.indexOf("/");
       if (nextSlashIndex > 0) {
         directories.add(remainingPath.slice(0, nextSlashIndex));
@@ -33,7 +33,7 @@ export const BrowseScreen = (p: { path: string }) => {
     : files
         .filter((file) => {
           const fileDir = file.filePath.substring(0, file.filePath.lastIndexOf("/"));
-          return fileDir === p.path;
+          return fileDir === p.browsePath;
         })
         .filter((file) => file.file !== "");
 
@@ -42,12 +42,12 @@ export const BrowseScreen = (p: { path: string }) => {
       <div className="mb-6">
         <div className="flex items-end gap-2">
           <h1 className="mb-0 text-2xl font-bold">Current Path:</h1>
-          <p className="flex-1 text-lg">{p.path}</p>
+          <p className="flex-1 text-lg">{p.browsePath}</p>
         </div>
       </div>
 
       <div className="mb-6">
-        <FileUploader currentPath={p.path} onUploadComplete={() => {}} />
+        <FileUploader currentPath={p.browsePath} onUploadComplete={() => {}} />
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -56,7 +56,7 @@ export const BrowseScreen = (p: { path: string }) => {
           <div
             key={dirName}
             onClick={() => {
-              router.push(`/browse${p.path}/${dirName}`);
+              router.push(`/browse${p.browsePath}/${dirName}`);
             }}
             className="flex cursor-pointer flex-col items-center rounded-lg border p-4 hover:bg-accent"
           >

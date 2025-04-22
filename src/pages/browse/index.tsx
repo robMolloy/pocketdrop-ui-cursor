@@ -1,7 +1,7 @@
 import { BrowseScreen } from "@/screens/BrowseScreen";
 
 const Index = () => {
-  return <BrowseScreen path="/" />;
+  return <BrowseScreen browsePath="/" />;
 };
 
 export default Index;
